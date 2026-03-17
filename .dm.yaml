@@ -1,0 +1,8 @@
+hooks:
+  post_pull:
+  - ddev composer install
+  - ddev npm install
+  post_import_db:
+  - ddev php please make:user ddev@ddev.site --super --password=ddev -n
+domains: {}
+sync_dirs: []

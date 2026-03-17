@@ -1,0 +1,7 @@
+super: true
+id: dec72713-dc5a-45dc-9f82-4035fe14663d
+password_hash: $2y$12$AP6Z6GKGlDwYoRRHU9mNtOhwu2P/w8uJvhMuU3S.9ofB918wE.cWm
+preferences:
+  collections:
+    pages:
+      view: tree
