@@ -11,11 +11,14 @@
     ],
     "require": {
         "php": "^8.2",
+        "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "statamic/cms": "^6.0"
+        "statamic/cms": "^6.0",
+        "thoughtco/statamic-cache-tracker": "^2.3"
     },
     "require-dev": {
+        "cboxdk/statamic-mcp": "^2.0",
         "fakerphp/faker": "^1.23",
         "fruitcake/laravel-debugbar": "^4.0",
         "laravel/pail": "^1.2.2",

@@ -1,0 +1,21 @@
+title: 'Block: Quote'
+fields:
+  -
+    handle: content
+    field:
+      type: bard
+      display: Quote
+      container: assets
+      remove_empty_nodes: true
+  -
+    handle: author
+    field:
+      type: text
+      display: Author
+  -
+    handle: author_image
+    field:
+      type: assets
+      display: 'Author Image'
+      container: assets
+      max_files: 1

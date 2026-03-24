@@ -1,19 +1,163 @@
 ---
 id: home
 blueprint: pages
-title: 'Homesdf fd sdasf dfsadf'
+title: 'This is my homepage'
 template: home
 author: dec72713-dc5a-45dc-9f82-4035fe14663d
 updated_by: dec72713-dc5a-45dc-9f82-4035fe14663d
-updated_at: 1771237469
+updated_at: 1774306505
+content_blocks:
+  -
+    id: sIiQcn3ScP9CXNQBZPgoL
+    type: text
+    enabled: true
+    content:
+      -
+        type: heading
+        attrs:
+          level: 2
+        content:
+          -
+            type: text
+            text: 'Hey, welcome to my homepage'
+      -
+        type: paragraph
+        content:
+          -
+            type: text
+            text: blubbbii
+      -
+        type: paragraph
+        content:
+          -
+            type: text
+            marks:
+              -
+                type: bold
+            text: afefwawefwafe
+  -
+    id: kmWa7Coxr-DoyqtqeaSRe
+    type: text
+    enabled: true
+    content:
+      -
+        type: bulletList
+        content:
+          -
+            type: listItem
+            content:
+              -
+                type: paragraph
+                content:
+                  -
+                    type: text
+                    text: aweffewaweffaweawffawefewa
+          -
+            type: listItem
+            content:
+              -
+                type: paragraph
+                content:
+                  -
+                    type: text
+                    text: hey
+  -
+    id: hero-block-001
+    type: hero
+    enabled: true
+    title: 'Building the modern web'
+    subtitle: 'A showcase of Statamic + Inertia + Vue — fast, flexible, and beautifully composed.'
+    background_image: viktor-forgacs-click-vng9kgg_era-unsplash.jpg
+    cta_label: "See what's possible"
+    cta_url: '#'
+  -
+    id: quote-block-001
+    type: quote
+    enabled: true
+    content:
+      -
+        type: paragraph
+        content:
+          -
+            type: text
+            text: 'The best way to predict the future is to invent it.'
+    author: 'Alan Kay'
+    author_image: leon-rohrwild-5apkpfvda8i-unsplash.jpg
+  -
+    id: card-grid-block-001
+    type: card_grid
+    enabled: true
+    cards:
+      -
+        id: card-001
+        type: card
+        enabled: true
+        image: alan-jiang-md3fl3s4z3s-unsplash.jpg
+        title: 'Statamic CMS'
+        text: 'A powerful flat-file CMS built on Laravel with a beautiful control panel.'
+        link: 'https://statamic.com'
+      -
+        id: card-002
+        type: card
+        enabled: true
+        image: marek-piwnicki-j9rf6ctw_q0-unsplash.jpg
+        title: Inertia.js
+        text: 'Build single-page apps without building an API. The modern monolith.'
+        link: 'https://inertiajs.com'
+      -
+        id: card-003
+        type: card
+        enabled: true
+        image: evgeni-tcherkasski-kow5jlc9ipi-unsplash.jpg
+        title: 'Vue 3'
+        text: 'The progressive JavaScript framework for building reactive user interfaces.'
+        link: 'https://vuejs.org'
+  -
+    id: accordion-block-001
+    type: accordion
+    enabled: true
+    items:
+      -
+        id: accordion-item-001
+        type: item
+        enabled: true
+        question: 'What is Statamic?'
+        answer:
+          -
+            type: paragraph
+            content:
+              -
+                type: text
+                text: 'Statamic is a Laravel-based CMS that stores content as flat files. No database required — just clean YAML and Markdown.'
+      -
+        id: accordion-item-002
+        type: item
+        enabled: true
+        question: 'Why use Inertia.js with Statamic?'
+        answer:
+          -
+            type: paragraph
+            content:
+              -
+                type: text
+                text: 'Inertia lets you write Vue components as full page views while keeping all your routing and data fetching on the server — no REST API needed.'
+      -
+        id: accordion-item-003
+        type: item
+        enabled: true
+        question: 'How does the block builder work?'
+        answer:
+          -
+            type: paragraph
+            content:
+              -
+                type: text
+                text: 'Each block is a replicator set in Statamic. The transformer converts field values to JSON-serializable data, and Vue components render each block type by its type handle.'
+  -
+    id: image-caption-block-001
+    type: image_caption
+    enabled: true
+    image: tsuyoshi-kozu-boc-f7jwdek-unsplash.jpg
+    caption: 'A beautiful scene — powered by Statamic assets.'
+    alignment: center
 ---
-## Welcome to your brand new Statamic site!
-
-Not sure what to do next? Here are a few ideas, but feel free to explore in your own way, in your own time.
-
-- [Jump into the Control Panel](/cp) and edit this page or begin setting up your own collections and blueprints.
-- [Head to the docs](https://statamic.dev) and learn how Statamic works.
-- [Watch some Statamic videos](https://youtube.com/statamic) on YouTube.
-- [Join our Discord chat](https://statamic.com/discord) and meet thousands of other Statamic developers.
-- [Start a discussion](https://github.com/statamic/cms/discussions) and get answers to your questions.
-- [Star Statamic on Github](https://github.com/statamic/cms) if you enjoy using it!

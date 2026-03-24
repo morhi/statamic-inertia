@@ -1,0 +1,36 @@
+title: 'Block: Card Grid'
+fields:
+  -
+    handle: cards
+    field:
+      type: replicator
+      display: Cards
+      sets:
+        card_items:
+          display: Items
+          sets:
+            card:
+              display: Card
+              fields:
+                -
+                  handle: image
+                  field:
+                    type: assets
+                    display: Image
+                    container: assets
+                    max_files: 1
+                -
+                  handle: title
+                  field:
+                    type: text
+                    display: Title
+                -
+                  handle: text
+                  field:
+                    type: text
+                    display: Text
+                -
+                  handle: link
+                  field:
+                    type: text
+                    display: Link

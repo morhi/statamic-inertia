@@ -1,0 +1,41 @@
+title: 'Block Builder'
+fields:
+  -
+    handle: content_blocks
+    field:
+      type: replicator
+      display: 'Block Builder'
+      sets:
+        common:
+          display: Allgemein
+          sets:
+            text:
+              display: Text
+              fields:
+                -
+                  import: block_text
+            hero:
+              display: Hero
+              fields:
+                -
+                  import: block_hero
+            quote:
+              display: Quote
+              fields:
+                -
+                  import: block_quote
+            card_grid:
+              display: 'Card Grid'
+              fields:
+                -
+                  import: block_card_grid
+            accordion:
+              display: Accordion
+              fields:
+                -
+                  import: block_accordion
+            image_caption:
+              display: 'Image + Caption'
+              fields:
+                -
+                  import: block_image_caption

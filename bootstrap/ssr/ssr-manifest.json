@@ -1,0 +1,23 @@
+{
+  "resources/js/Blocks/Accordion.vue": [],
+  "resources/js/Blocks/Accordion.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Blocks/CardGrid.vue": [],
+  "resources/js/Blocks/CardGrid.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Blocks/Hero.vue": [],
+  "resources/js/Blocks/Hero.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Blocks/ImageCaption.vue": [],
+  "resources/js/Blocks/ImageCaption.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Blocks/Quote.vue": [],
+  "resources/js/Blocks/Quote.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Blocks/Text.vue": [],
+  "resources/js/Blocks/Text.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Components/Blocks.vue": [],
+  "resources/js/Components/Blocks.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Pages/Layout.vue": [],
+  "resources/js/Pages/Layout.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Pages/Pages/Page.vue": [],
+  "resources/js/Pages/Pages/Page.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/ssr.js": [],
+  "resources/js/utils/useInertiaPageProp.ts": [],
+  "resources/js/utils/usePreviewRefresh.ts": []
+}

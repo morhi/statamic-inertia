@@ -1,0 +1,30 @@
+title: 'Block: Hero'
+fields:
+  -
+    handle: title
+    field:
+      type: text
+      display: Title
+      required: true
+  -
+    handle: subtitle
+    field:
+      type: text
+      display: Subtitle
+  -
+    handle: background_image
+    field:
+      type: assets
+      display: 'Background Image'
+      container: assets
+      max_files: 1
+  -
+    handle: cta_label
+    field:
+      type: text
+      display: 'CTA Label'
+  -
+    handle: cta_url
+    field:
+      type: text
+      display: 'CTA URL'

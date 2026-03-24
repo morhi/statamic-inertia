@@ -1,0 +1,24 @@
+title: 'Block: Image + Caption'
+fields:
+  -
+    handle: image
+    field:
+      type: assets
+      display: Image
+      container: assets
+      max_files: 1
+  -
+    handle: caption
+    field:
+      type: text
+      display: Caption
+  -
+    handle: alignment
+    field:
+      type: select
+      display: Alignment
+      options:
+        left: Left
+        center: Center
+        right: Right
+      default: center

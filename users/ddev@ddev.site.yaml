@@ -5,3 +5,4 @@ preferences:
   collections:
     pages:
       view: tree
+      after_save: continue_editing
