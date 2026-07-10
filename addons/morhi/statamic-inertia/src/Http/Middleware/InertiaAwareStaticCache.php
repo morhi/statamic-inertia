@@ -20,6 +20,13 @@ class InertiaAwareStaticCache extends \Statamic\StaticCaching\Middleware\Cache
         return parent::handle($request, function ($request) use ($next) {
             $response = $next($request);
 
+            // The document can be rewritten by the static cache at any time (content change,
+            // manual clear, etc.), so the browser must never cache it either — only nginx's
+            // and Statamic's server-side static cache should be treated as authoritative.
+            // Mirrors the no-store already set on Inertia JSON responses (HandleInertiaRequests)
+            // and on the nginx @static block that serves this same document from disk.
+            $response->headers->set('Cache-Control', 'no-store');
+
             // If SSR was configured to run but the gateway couldn't reach it (server down,
             // unreachable, erroring), the response was served without pre-rendered markup.
             // Mark it uncacheable so Statamic's own Cache::shouldBeCached() skips it — caching

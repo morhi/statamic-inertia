@@ -624,9 +624,18 @@ Files are invalidated by:
 ddev php artisan statamic:static:clear
 ```
 
-### Cache-Control for Inertia responses
+### Cache-Control: the browser never caches, only the server-side layers do
 
-`HandleInertiaRequests::handle()` adds `Cache-Control: no-store` to all Inertia JSON responses, preventing browsers from serving a stale JSON payload when the user navigates using the back button.
+Both static cache layers above are deliberately server-side only — the browser is never allowed to cache the document or the JSON payload itself, since either can be invalidated and rewritten at any time by a content change. `Cache-Control: no-store` is set on every response, from every path that can serve it, so a stale copy can never come from the browser's own cache (e.g. on back/forward navigation):
+
+| Response | Set by |
+|---|---|
+| Full HTML document, served by NGINX from `public/static/` (`X-Cache-Status: HIT`) | `add_header` in the `@static` nginx location |
+| Full HTML document, rendered by PHP (`X-Cache-Status: MISS`/`BYPASS`) | `InertiaAwareStaticCache::handle()` |
+| Inertia JSON, served by NGINX from `public/static/json/` (`X-Cache-Status: HIT`) | `add_header` in the `@inertia_cached` nginx location |
+| Inertia JSON, rendered by PHP | `HandleInertiaRequests::handle()` |
+
+This is unrelated to the SSR-failure `X-Statamic-Uncacheable` marker above — that one controls whether the *server-side* static cache writes a copy at all; `no-store` controls whether the *browser* is allowed to keep one, and applies unconditionally regardless of that marker.
 
 ### X-Cache-Status header
 
