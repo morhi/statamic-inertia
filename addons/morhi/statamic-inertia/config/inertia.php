@@ -124,7 +124,12 @@ return [
 
     'entry_listing' => [
 
-        'route' => env('INERTIA_ENTRY_LISTING_ROUTE', '/api/entry-listing'),
+        // Collection handles this public endpoint is allowed to query and expose.
+        // New collections must be added here explicitly (defense against
+        // accidentally exposing internal-only collections like "orders").
+        'allowed_collections' => [
+            //
+        ],
 
     ],
 

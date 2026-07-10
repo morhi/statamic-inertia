@@ -11,7 +11,7 @@ use Morhi\StatamicInertia\Http\Controllers\StatamicPageController;
  * always fresh by construction. Mounted under the existing 'api' exclusion below,
  * so it can never collide with the wildcard route.
  */
-Route::get(config('inertia.entry_listing.route', '/api/entry-listing'), EntryListingController::class)
+Route::get('/api/inertia/entry-listing', EntryListingController::class)
     ->name('inertia.entry-listing');
 
 /*

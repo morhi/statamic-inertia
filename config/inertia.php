@@ -111,4 +111,26 @@ return [
 
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Entry Listing Block
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the "entry_listing" page-builder block's "Load more"
+    | pagination endpoint. This route is deliberately plain (non-Inertia) so
+    | it's never touched by the static/JSON caching layers.
+    |
+    */
+
+    'entry_listing' => [
+
+        // Collection handles this public endpoint is allowed to query and expose.
+        // New collections must be added here explicitly (defense against
+        // accidentally exposing internal-only collections like "orders").
+        'allowed_collections' => [
+            'blog',
+        ],
+
+    ],
+
 ];

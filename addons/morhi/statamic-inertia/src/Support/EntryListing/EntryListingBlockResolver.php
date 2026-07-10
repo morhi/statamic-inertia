@@ -13,9 +13,9 @@ class EntryListingBlockResolver implements BlockResolverInterface
 
     public function resolve(Values $set): array
     {
-        // The `collections` fieldtype's casted/augmented value is the hydrated
-        // Collection model, not the handle string — we need the raw stored value
-        // here instead, the same way Values::toArray() unwraps it via ->raw().
+        // The `entry_listing_collection` fieldtype's augmented value is a LabeledValue,
+        // not the handle string — we need the raw stored value here instead, the
+        // same way Values::toArray() unwraps it via ->raw().
         $rawCollection = $set->getProxiedInstance()->get('collection');
         $rawCollection = $rawCollection instanceof Value ? $rawCollection->raw() : $rawCollection;
         $collectionHandle = Arr::first(Arr::wrap($rawCollection));
@@ -30,7 +30,7 @@ class EntryListingBlockResolver implements BlockResolverInterface
             'heading'       => $set->heading,
             'collection'    => $collectionHandle,
             'per_page'      => $perPage,
-            'load_more_url' => config('inertia.entry_listing.route', '/api/entry-listing'),
+            'load_more_url' => '/api/inertia/entry-listing',
         ], $result);
     }
 }
