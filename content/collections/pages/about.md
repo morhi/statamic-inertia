@@ -7,11 +7,23 @@ content_blocks:
     id: about-hero-001
     type: hero
     enabled: true
-    title: 'About Us'
+    title: 'About Uss'
     subtitle: 'We build thoughtful digital experiences using modern tools and a craftsman mindset.'
     background_image: marek-piwnicki-j9rf6ctw_q0-unsplash.jpg
     cta_label: 'See our work'
     cta_url: /work
+  -
+    id: 0JSSKudKRP2FGRMqy4iY7
+    column_count: three
+    images:
+      - alan-jiang-md3fl3s4z3s-unsplash.jpg
+      - evgeni-tcherkasski-kow5jlc9ipi-unsplash.jpg
+      - leon-rohrwild-5apkpfvda8i-unsplash.jpg
+      - marek-piwnicki-j9rf6ctw_q0-unsplash.jpg
+      - tsuyoshi-kozu-boc-f7jwdek-unsplash.jpg
+      - viktor-forgacs-click-vng9kgg_era-unsplash.jpg
+    type: masonry_gallery
+    enabled: true
   -
     id: about-text-001
     type: text
@@ -75,5 +87,5 @@ content_blocks:
                 text: 'We work closely with clients through short feedback loops, weekly check-ins, and transparent project tracking.'
 author: dec72713-dc5a-45dc-9f82-4035fe14663d
 updated_by: dec72713-dc5a-45dc-9f82-4035fe14663d
-updated_at: 1774307923
+updated_at: 1783673178
 ---

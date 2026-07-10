@@ -6,7 +6,7 @@ class InertiaJsonCache
 {
     public function handle($request, \Closure $next)
     {
-        if (! $request->header('X-Inertia')) {
+        if (config('statamic.static_caching.strategy') !== 'full' || !$request->header('X-Inertia')) {
             return $next($request);
         }
 
@@ -25,7 +25,7 @@ class InertiaJsonCache
             return false;
         }
 
-        if (! str_contains($response->headers->get('Content-Type', ''), 'application/json')) {
+        if (!str_contains($response->headers->get('Content-Type', ''), 'application/json')) {
             return false;
         }
 
@@ -42,9 +42,9 @@ class InertiaJsonCache
     private function write($request, $response): void
     {
         $path = $this->filePath($request->getPathInfo());
-        $dir  = dirname($path);
+        $dir = dirname($path);
 
-        if (! is_dir($dir)) {
+        if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
 

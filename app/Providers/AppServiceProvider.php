@@ -7,6 +7,7 @@ use App\Support\EntryTransformer;
 use App\Support\Transformers\AssetsTransformer;
 use App\Support\Transformers\BardTransformer;
 use App\Support\Transformers\ReplicatorTransformer;
+use App\Support\Transformers\SelectTransformer;
 use App\Listeners\InvalidateInertiaJsonCache;
 use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Routing\Router;
@@ -29,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
             'assets'     => new AssetsTransformer(),
             'bard'       => new BardTransformer(),
             'replicator' => new ReplicatorTransformer(),
+            'select'     => new SelectTransformer(),
         ]));
     }
 

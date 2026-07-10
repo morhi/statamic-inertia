@@ -1,0 +1,19 @@
+title: 'Block: Masonry Gallery'
+fields:
+  -
+    handle: column_count
+    field:
+      type: select
+      display: Columns
+      options:
+        two: '2 Columns'
+        three: '3 Columns'
+        four: '4 Columns'
+      default: three
+  -
+    handle: images
+    field:
+      type: assets
+      display: Images
+      container: assets
+      max_files: ''

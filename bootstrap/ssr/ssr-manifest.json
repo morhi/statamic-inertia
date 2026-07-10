@@ -1,4 +1,5 @@
 {
+  "\u0000plugin-vue:export-helper": [],
   "resources/js/Blocks/Accordion.vue": [],
   "resources/js/Blocks/Accordion.vue?vue&type=script&setup=true&lang.ts": [],
   "resources/js/Blocks/CardGrid.vue": [],
@@ -7,6 +8,9 @@
   "resources/js/Blocks/Hero.vue?vue&type=script&setup=true&lang.ts": [],
   "resources/js/Blocks/ImageCaption.vue": [],
   "resources/js/Blocks/ImageCaption.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Blocks/MasonryGallery.vue": [],
+  "resources/js/Blocks/MasonryGallery.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Blocks/MasonryGallery.vue?vue&type=style&index=0&scoped=57225447&lang.css": [],
   "resources/js/Blocks/Quote.vue": [],
   "resources/js/Blocks/Quote.vue?vue&type=script&setup=true&lang.ts": [],
   "resources/js/Blocks/Text.vue": [],

@@ -39,3 +39,8 @@ fields:
               fields:
                 -
                   import: block_image_caption
+            masonry_gallery:
+              display: 'Masonry Gallery'
+              fields:
+                -
+                  import: block_masonry_gallery

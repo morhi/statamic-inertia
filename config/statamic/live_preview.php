@@ -55,6 +55,6 @@ return [
     |
     */
 
-    'hot_reload_contents' => true,
+    'hot_reload_contents' => false,
 
 ];
