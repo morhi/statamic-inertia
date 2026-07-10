@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "918700befd6f395bce110677f5bd4874",
+    "content-hash": "729276017dddde086b2173ced1300e7b",
     "packages": [
         {
             "name": "ajthinking/archetype",
@@ -3051,6 +3051,47 @@
                 }
             ],
             "time": "2026-01-02T08:56:05+00:00"
+        },
+        {
+            "name": "morhi/statamic-inertia",
+            "version": "dev-inertia-poc",
+            "dist": {
+                "type": "path",
+                "url": "addons/morhi/statamic-inertia",
+                "reference": "da72e19ff3afad5ee27ec193447af004f6b206e1"
+            },
+            "require": {
+                "inertiajs/inertia-laravel": "^2.0",
+                "statamic/cms": "^6.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^10.8"
+            },
+            "type": "library",
+            "extra": {
+                "statamic": {
+                    "name": "Statamic Inertia",
+                    "description": "Statamic Inertia addon"
+                },
+                "laravel": {
+                    "providers": [
+                        "Morhi\\StatamicInertia\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Morhi\\StatamicInertia\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Morhi\\StatamicInertia\\Tests\\": "tests"
+                }
+            },
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "nesbot/carbon",
@@ -12453,7 +12494,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "morhi/statamic-inertia": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

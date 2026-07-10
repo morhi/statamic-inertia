@@ -1,0 +1,38 @@
+{
+    "name": "morhi/statamic-inertia",
+    "autoload": {
+        "psr-4": {
+            "Morhi\\StatamicInertia\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Morhi\\StatamicInertia\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "inertiajs/inertia-laravel": "^2.0",
+        "statamic/cms": "^6.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.8"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic Inertia",
+            "description": "Statamic Inertia addon"
+        },
+        "laravel": {
+            "providers": [
+                "Morhi\\StatamicInertia\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

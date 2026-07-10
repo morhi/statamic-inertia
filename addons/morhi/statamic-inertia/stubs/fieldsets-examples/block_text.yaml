@@ -1,0 +1,9 @@
+title: 'Block : Text'
+fields:
+  -
+    handle: content
+    field:
+      container: assets
+      remove_empty_nodes: true
+      type: bard
+      display: Content

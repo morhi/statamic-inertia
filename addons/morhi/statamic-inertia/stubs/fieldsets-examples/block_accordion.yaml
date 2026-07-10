@@ -1,0 +1,26 @@
+title: 'Block: Accordion'
+fields:
+  -
+    handle: items
+    field:
+      type: replicator
+      display: Items
+      sets:
+        accordion_items:
+          display: Items
+          sets:
+            item:
+              display: Item
+              fields:
+                -
+                  handle: question
+                  field:
+                    type: text
+                    display: Question
+                -
+                  handle: answer
+                  field:
+                    type: bard
+                    display: Answer
+                    container: assets
+                    remove_empty_nodes: true
