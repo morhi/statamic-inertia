@@ -1,6 +1,8 @@
 # Inertia.js Integration
 
-This project uses [Inertia.js](https://inertiajs.com/) to bridge Statamic's PHP backend with a Vue 3 + TypeScript frontend, including full SSR support. Statamic serves as the data layer; Vue handles all rendering.
+This addon bridges Statamic's PHP backend with a Vue 3 + TypeScript frontend, including full SSR support. Statamic serves as the data layer; Vue handles all rendering.
+
+For installation instructions, see [README.md](README.md). This document covers the architecture in detail.
 
 ---
 
@@ -8,20 +10,21 @@ This project uses [Inertia.js](https://inertiajs.com/) to bridge Statamic's PHP 
 
 1. [Architecture Overview](#architecture-overview)
 2. [Request Lifecycle](#request-lifecycle)
-3. [File Structure](#file-structure)
-4. [Root Template](#root-template)
-5. [Page Component Resolution](#page-component-resolution)
-6. [Entry Data & Transformers](#entry-data--transformers)
-7. [Block Builder](#block-builder)
-8. [Navigation](#navigation)
-9. [Image Handling (Glide)](#image-handling-glide)
-10. [Shared Props](#shared-props)
-11. [Caching](#caching)
-12. [Statamic Live Preview](#statamic-live-preview)
-13. [Development Setup](#development-setup)
-14. [SSR Setup](#ssr-setup)
-15. [Adding a New Page Type](#adding-a-new-page-type)
-16. [Adding a New Block](#adding-a-new-block)
+3. [Package Structure](#package-structure)
+4. [Publish Groups](#publish-groups)
+5. [Root Template](#root-template)
+6. [Page Component Resolution](#page-component-resolution)
+7. [Entry Data & Transformers](#entry-data--transformers)
+8. [Block Builder](#block-builder)
+9. [Navigation](#navigation)
+10. [Image Handling (Glide)](#image-handling-glide)
+11. [Shared Props](#shared-props)
+12. [Caching](#caching)
+13. [Statamic Live Preview](#statamic-live-preview)
+14. [Development Setup](#development-setup)
+15. [SSR Setup](#ssr-setup)
+16. [Adding a New Page Type](#adding-a-new-page-type)
+17. [Adding a New Block](#adding-a-new-block)
 
 ---
 
@@ -54,6 +57,8 @@ Laravel / Statamic
         Vue (client hydrates SSR HTML)
 ```
 
+The controller, middleware, and transformers live in this addon (`Morhi\StatamicInertia\*`, autoloaded via Composer). The Vue/JS frontend, root Antlers views, `vite.config.js`, `package.json`, and example blueprints/fieldsets are published into the host project by `vendor:publish` (see [Publish Groups](#publish-groups)), since Vite can only build files that live inside the host project.
+
 ---
 
 ## Request Lifecycle
@@ -79,74 +84,93 @@ Laravel / Statamic
 
 ---
 
-## File Structure
+## Package Structure
 
 ```
-app/
-├── Http/
-│   ├── Controllers/
-│   │   ├── InertiaController.php          # Abstract base: view(), resolveComponent()
-│   │   └── StatamicPageController.php     # Resolves any URL to an Inertia page
-│   └── Middleware/
-│       ├── HandleInertiaRequests.php      # Shared props, nav, no-store cache header
-│       ├── InertiaAwareStaticCache.php    # Prevents Statamic static cache on XHR
-│       └── InertiaJsonCache.php           # Caches Inertia JSON responses to disk
-├── Listeners/
-│   └── InvalidateInertiaJsonCache.php    # Deletes stale JSON cache on content change
-├── Providers/
-│   └── AppServiceProvider.php             # Registers transformers, middleware group, listeners
-└── Support/
-    ├── EntryTransformer.php               # Transforms Statamic entry fields to JS-safe values
-    ├── DataProviders/
-    │   ├── EntryDataInterface.php         # Contract for custom data providers
-    │   ├── AbstractEntryData.php          # Base class with transformer access
-    │   └── EntryDataRegistry.php          # Maps blueprint/entry → custom data provider
-    └── Transformers/
-        ├── FieldTransformerInterface.php  # Contract: transform(Value): mixed
-        ├── AssetsTransformer.php          # assets fields → { url, srcset, alt }
-        ├── BardTransformer.php            # bard fields → HTML string
-        └── ReplicatorTransformer.php      # replicator fields → array of sets
-
-resources/
-├── js/
-│   ├── app.js                            # Client-side Inertia bootstrap (SSR hydration)
-│   ├── ssr.js                            # Server-side Inertia bootstrap
-│   ├── types.d.ts                        # Block type definitions
-│   ├── utils/
-│   │   └── usePreviewRefresh.ts          # Statamic live preview support
-│   ├── Pages/
-│   │   ├── Layout.vue                    # Persistent layout (header, nav)
-│   │   └── Pages/
-│   │       └── Page.vue                  # Default page component
-│   ├── Components/
-│   │   └── Blocks.vue                    # Renders block array by type
-│   └── Blocks/
-│       ├── Text.vue
-│       ├── Hero.vue
-│       ├── Quote.vue
-│       ├── CardGrid.vue
-│       ├── Accordion.vue
-│       └── ImageCaption.vue
-└── views/
-    ├── layout.antlers.html               # Root HTML template
-    ├── inertia.antlers.html              # Minimal view (body only)
-    └── partials/
-        ├── _inertia-head.blade.php       # @inertiaHead directive
-        └── _inertia-body.blade.php       # @inertia directive
-
-routes/
-├── web.php                               # Standard Statamic routes
-└── inertia.php                           # Catch-all wildcard → StatamicPageController
-
-config/
-└── inertia.php                           # Inertia config (SSR host/port, component paths)
+addons/morhi/statamic-inertia/
+├── config/
+│   └── inertia.php                        # inertiajs/inertia-laravel config — always merged, publishable
+├── src/
+│   ├── ServiceProvider.php                # middleware group, route registration, singletons, publish groups
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── InertiaController.php      # Abstract base: view(), resolveComponent()
+│   │   │   └── StatamicPageController.php # Resolves any URL to an Inertia page
+│   │   └── Middleware/
+│   │       ├── HandleInertiaRequests.php  # Shared props, nav, no-store cache header
+│   │       ├── InertiaAwareStaticCache.php # Prevents Statamic static cache on XHR
+│   │       └── InertiaJsonCache.php       # Caches Inertia JSON responses to disk
+│   ├── Listeners/
+│   │   └── InvalidateInertiaJsonCache.php # Deletes stale JSON cache on content change (auto-discovered)
+│   └── Support/
+│       ├── EntryTransformer.php           # Transforms Statamic entry fields to JS-safe values
+│       ├── DataProviders/
+│       │   ├── EntryDataInterface.php     # Contract for custom data providers
+│       │   ├── AbstractEntryData.php      # Base class with transformer access
+│       │   └── EntryDataRegistry.php      # Maps blueprint/entry → custom data provider
+│       └── Transformers/
+│           ├── FieldTransformerInterface.php # Contract: transform(Value): mixed
+│           ├── AssetsTransformer.php      # assets fields → { url, srcset, alt }
+│           ├── BardTransformer.php        # bard fields → HTML string
+│           ├── ReplicatorTransformer.php  # replicator fields → array of sets
+│           └── SelectTransformer.php      # select fields → raw value(s)
+├── routes/
+│   └── web.php                            # Self-contained catch-all route, registers with 'statamic.inertia' middleware
+└── stubs/                                 # Source files for each publish() group — copied into the host project
+    ├── js/                                # tag: statamic-inertia-scaffold
+    │   ├── app.js                         # Client-side Inertia bootstrap (SSR hydration)
+    │   ├── ssr.js                         # Server-side Inertia bootstrap
+    │   ├── types.d.ts                     # Block type definitions
+    │   ├── utils/
+    │   │   ├── useInertiaPageProp.ts      # Typed usePage().props accessor
+    │   │   └── usePreviewRefresh.ts       # Statamic live preview support
+    │   ├── Pages/
+    │   │   ├── Layout.vue                 # Persistent layout (header, nav)
+    │   │   └── Pages/
+    │   │       └── Page.vue               # Default page component
+    │   └── Components/
+    │       └── Blocks.vue                 # Renders block array by type
+    ├── js-examples/                       # tag: statamic-inertia-examples → resources/js/Blocks/
+    │   ├── Text.vue, Hero.vue, Quote.vue, CardGrid.vue, Accordion.vue, ImageCaption.vue, MasonryGallery.vue
+    ├── fieldsets-examples/                # tag: statamic-inertia-examples → resources/fieldsets/
+    │   └── block_builder.yaml, block_*.yaml
+    ├── blueprints-examples/                # tag: statamic-inertia-examples → resources/blueprints/collections/pages/
+    │   └── page.yaml
+    ├── views/                             # tag: statamic-inertia-views → resources/views/
+    │   ├── layout.antlers.html            # Root HTML template
+    │   ├── inertia.antlers.html           # Minimal view (body only)
+    │   └── partials/
+    │       ├── _inertia-head.blade.php    # @inertiaHead directive
+    │       └── _inertia-body.blade.php    # @inertia directive
+    ├── vite.config.js                     # tag: statamic-inertia-project-files → project root
+    └── package.json                       # tag: statamic-inertia-project-files → project root
 ```
+
+---
+
+## Publish Groups
+
+Everything that must physically live in the host project (Vite can only build files inside the host project — it can't reach into `vendor/`) is delivered via standard Laravel `vendor:publish` tags, registered in `ServiceProvider::bootAddon()`:
+
+| Tag | Destination | Contents |
+|---|---|---|
+| `statamic-inertia-config` | `config/inertia.php` | `inertiajs/inertia-laravel` config (also auto-merged, so it works even unpublished) |
+| `statamic-inertia-scaffold` | `resources/js/` | Core bootstrap: `app.js`, `ssr.js`, `types.d.ts`, `utils/`, `Pages/Layout.vue`, `Pages/Pages/Page.vue`, `Components/Blocks.vue` |
+| `statamic-inertia-examples` | `resources/js/Blocks/`, `resources/fieldsets/`, `resources/blueprints/collections/pages/` | Optional starter blocks + matching fieldsets/blueprint — safe to delete or replace |
+| `statamic-inertia-views` | `resources/views/` | Root Antlers template + Blade partials |
+| `statamic-inertia-project-files` | `vite.config.js`, `package.json` | Vite config and npm dependencies |
+
+```bash
+php artisan vendor:publish --provider="Morhi\StatamicInertia\ServiceProvider"
+```
+
+publishes everything at once. Each tag can also be published (or re-published with `--force`) individually. `vendor:publish` only writes missing files by default — existing files are skipped unless `--force` is passed, so re-running after an addon update is safe.
 
 ---
 
 ## Root Template
 
-`resources/views/layout.antlers.html` is set as the Inertia root view in `HandleInertiaRequests::$rootView`. It is rendered once on the first page load — subsequent Inertia navigations only return JSON, not this template.
+`resources/views/layout.antlers.html` (published by `statamic-inertia-views`) is set as the Inertia root view in `HandleInertiaRequests::$rootView`. It is rendered once on the first page load — subsequent Inertia navigations only return JSON, not this template.
 
 ```html
 <!doctype html>
@@ -171,15 +195,16 @@ The template is Antlers. The Blade directives (`@inertia`, `@inertiaHead`) are i
 
 ### Route
 
-All frontend URLs are handled by a single wildcard route in `routes/inertia.php`:
+All frontend URLs are handled by a single wildcard route in this addon's `routes/web.php`, self-registered by `ServiceProvider` (no `bootstrap/app.php` changes needed in the host project):
 
 ```php
-Route::get('/{uri?}', StatamicPageController::class)
+Route::middleware('statamic.inertia')
+    ->get('/{uri?}', StatamicPageController::class)
     ->where('uri', '^(?!cp(/|$)|api(/|$)|up$|img(/|$)).*')
     ->name('inertia.page');
 ```
 
-The regex excludes system paths: `cp` (Control Panel), `api`, `up` (health check), and `img` (Glide image URLs).
+The regex excludes system paths: `cp` (Control Panel), `api` (REST API), `up` (health check), and `img` (Glide image URLs).
 
 ### Controller
 
@@ -228,30 +253,33 @@ return pages[`./Pages/${name}.vue`]
 
 ### EntryTransformer
 
-`app/Support/EntryTransformer.php` converts Statamic `Value` objects to plain PHP arrays safe for JSON serialisation. It dispatches to field-type specific transformers:
+`Morhi\StatamicInertia\Support\EntryTransformer` converts Statamic `Value` objects to plain PHP arrays safe for JSON serialisation. It dispatches to field-type specific transformers:
 
 | Field type | Transformer | Output |
 |---|---|---|
 | `assets` | `AssetsTransformer` | `{ url, srcset, alt }` or array thereof |
 | `bard` | `BardTransformer` | HTML string |
 | `replicator` | `ReplicatorTransformer` | Array of set objects |
+| `select` | `SelectTransformer` | Raw value(s), unwrapped from `LabeledValue` |
 
-Transformers are registered as a singleton in `AppServiceProvider`:
+Transformers are registered as a singleton in `ServiceProvider::register()`:
 
 ```php
 $this->app->singleton(EntryTransformer::class, fn () => new EntryTransformer([
     'assets'     => new AssetsTransformer(),
     'bard'       => new BardTransformer(),
     'replicator' => new ReplicatorTransformer(),
+    'select'     => new SelectTransformer(),
 ]));
 ```
 
 ### Custom Data Providers
 
-For blueprint- or entry-specific data shaping, register a custom provider via `EntryDataRegistry`:
+For blueprint- or entry-specific data shaping, register a custom provider via `EntryDataRegistry`, e.g. from your own `AppServiceProvider::boot()`:
 
 ```php
-// In AppServiceProvider::boot() or a separate provider
+use Morhi\StatamicInertia\Support\DataProviders\EntryDataRegistry;
+
 app(EntryDataRegistry::class)->forBlueprint('article', ArticleData::class);
 app(EntryDataRegistry::class)->forEntry('my-special-slug', HomepageData::class);
 ```
@@ -259,6 +287,8 @@ app(EntryDataRegistry::class)->forEntry('my-special-slug', HomepageData::class);
 Custom providers extend `AbstractEntryData`:
 
 ```php
+use Morhi\StatamicInertia\Support\DataProviders\AbstractEntryData;
+
 class ArticleData extends AbstractEntryData
 {
     public function transform(Entry $entry): array
@@ -274,7 +304,7 @@ class ArticleData extends AbstractEntryData
 
 ## Block Builder
 
-Pages use a Replicator field (`content_blocks`) that supports multiple block types. The data flows from Statamic through to Vue as a typed array.
+Pages use a Replicator field (`content_blocks`) that supports multiple block types. The data flows from Statamic through to Vue as a typed array. The fieldsets and blueprint below are shipped as the `statamic-inertia-examples` publish group — treat them as a starting point, not fixed infrastructure.
 
 ### Fieldset structure
 
@@ -288,6 +318,7 @@ Pages use a Replicator field (`content_blocks`) that supports multiple block typ
 | `card_grid` | `cards` (nested replicator with `image`, `title`, `text`, `link`) | `Blocks/CardGrid.vue` |
 | `accordion` | `items` (nested replicator with `question`, `answer` bard) | `Blocks/Accordion.vue` |
 | `image_caption` | `image` (asset), `caption`, `alignment` | `Blocks/ImageCaption.vue` |
+| `masonry_gallery` | `column_count` (select), `images` (assets, unlimited) | `Blocks/MasonryGallery.vue` |
 
 ### Data flow
 
@@ -297,7 +328,7 @@ Pages use a Replicator field (`content_blocks`) that supports multiple block typ
 
 ### Vue rendering
 
-`Components/Blocks.vue` auto-discovers all files in `Blocks/` using a Vite glob import and builds a type-to-component map at build time. The template uses a single `<component :is>` — no changes to this file are needed when adding new blocks.
+`Components/Blocks.vue` (published by `statamic-inertia-scaffold`) auto-discovers all files in `Blocks/` using a Vite glob import and builds a type-to-component map at build time. The template uses a single `<component :is>` — no changes to this file are needed when adding new blocks.
 
 ```ts
 const modules = import.meta.glob('../Blocks/*.vue', { eager: true })
@@ -319,10 +350,13 @@ The filename is converted to a block type handle by PascalCase → snake_case:
 | `Hero.vue` | `hero` |
 | `CardGrid.vue` | `card_grid` |
 | `ImageCaption.vue` | `image_caption` |
+| `MasonryGallery.vue` | `masonry_gallery` |
 
 Each matched component is rendered with `v-bind="block"`, which spreads all block fields directly as individual props. Unknown block types are silently skipped.
 
 `defineOptions({ inheritAttrs: false })` is set on every block component to prevent undeclared block metadata (`type`, `id`, `enabled`) from leaking onto the root DOM element.
+
+`MasonryGallery.vue`'s lightbox uses `<Teleport to="body" :disabled="!mounted">` with a `mounted` ref set in `onMounted()` — plain `renderToString()` SSR doesn't wire the Teleport anchor into `<body>`, so disabling the teleport until after client mount avoids a hydration mismatch that previously caused a blank-page crash.
 
 ### Adding a new block
 
@@ -422,7 +456,7 @@ For multi-asset fields, it returns an array of such objects.
 
 ### Glide route exclusion
 
-The NGINX wildcard catch-all in `routes/inertia.php` excludes `img` paths so that `/img/asset/...` requests bypass `StatamicPageController` and reach Statamic's built-in `GlideController`:
+The wildcard route in this addon's `routes/web.php` excludes `img` paths so that `/img/asset/...` requests bypass `StatamicPageController` and reach Statamic's built-in `GlideController`:
 
 ```php
 ->where('uri', '^(?!cp(/|$)|api(/|$)|up$|img(/|$)).*')
@@ -455,8 +489,8 @@ On full page loads, Statamic's static cache middleware can write fully rendered 
 `InertiaJsonCache` caches Inertia's JSON responses to `public/static/json/{uri}_.json`. NGINX serves these files directly on subsequent navigation requests, bypassing PHP entirely.
 
 Files are invalidated by:
-- Content changes via `InvalidateInertiaJsonCache`, which listens to Statamic's `UrlInvalidated` event
-- Running `php artisan statamic:static:clear` or `cache-tracker:flush`, which deletes the entire `public/static/json/` directory
+- Content changes via `InvalidateInertiaJsonCache`, which listens to Statamic's `UrlInvalidated` event (auto-discovered from `src/Listeners/`)
+- Running `php artisan statamic:static:clear` or `cache-tracker:flush`, which deletes the entire `public/static/json/` directory (registered as a `CommandFinished` listener in `ServiceProvider::bootAddon()`)
 
 ```
 # Manually clear the Inertia JSON cache
@@ -539,7 +573,7 @@ In production, manage this process with a supervisor or pm2 to keep it alive.
 
 ### SSR configuration
 
-`config/inertia.php` controls SSR behaviour:
+`config/inertia.php` (published by `statamic-inertia-config`, or read directly from the addon if unpublished) controls SSR behaviour:
 
 ```php
 'ssr' => [
@@ -585,10 +619,11 @@ const props = defineProps<{
 </template>
 ```
 
-If you need custom data shaping beyond the default field transformers, register a data provider in `AppServiceProvider::boot()`:
+If you need custom data shaping beyond the default field transformers, register a data provider (e.g. in your own `AppServiceProvider::boot()`):
 
 ```php
-app(EntryDataRegistry::class)->forBlueprint('article', ArticleData::class);
+app(\Morhi\StatamicInertia\Support\DataProviders\EntryDataRegistry::class)
+    ->forBlueprint('article', ArticleData::class);
 ```
 
 ---
@@ -615,17 +650,14 @@ my_block:
 </template>
 
 <script lang="ts" setup>
-import { PropType } from 'vue'
-defineProps({ block: Object as PropType<Block> })
+defineOptions({ inheritAttrs: false })
+
+defineProps<{
+  my_field?: string
+}>()
 </script>
 ```
 
-4. Register it in `Components/Blocks.vue`:
-
-```vue
-import MyBlock from '../Blocks/MyBlock.vue'
-
-<MyBlock v-if="block.type === 'my_block'" :block="block" />
-```
+No registration step is required — `Components/Blocks.vue` auto-discovers new files in `Blocks/` via a Vite glob import and maps them by PascalCase → snake_case handle.
 
 If the block contains `assets` fields, they are automatically transformed to `{ url, srcset, alt }` by `AssetsTransformer`. For `bard` fields you get an HTML string. No additional configuration is needed.
