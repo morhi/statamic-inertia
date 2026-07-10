@@ -1,5 +1,6 @@
 {
     "name": "morhi/statamic-inertia",
+    "license": "BUSL-1.1",
     "autoload": {
         "psr-4": {
             "Morhi\\StatamicInertia\\": "src"

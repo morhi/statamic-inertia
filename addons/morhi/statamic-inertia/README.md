@@ -35,3 +35,7 @@ Re-run any tag with `--force` to overwrite existing files after an addon update.
 ## Documentation
 
 See [INERTIA.md](INERTIA.md) for the full architecture: request lifecycle, page component resolution, entry data transformers, the block builder, navigation, image handling, caching, live preview, SSR setup, and guides for adding new page types and blocks.
+
+## License
+
+This project is licensed under the [Business Source License 1.1](LICENSE.md). Free for personal and non-commercial use; commercial use requires a separate license from the author. On 2099-12-31 it converts to MIT.
