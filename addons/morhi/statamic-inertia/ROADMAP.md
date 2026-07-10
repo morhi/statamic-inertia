@@ -69,6 +69,17 @@ No search endpoint exists alongside `EntryListingController`. Statamic ships a `
 
 `tests/` currently only has the Testbench `TestCase.php` scaffold and a placeholder `ExampleTest.php` — no feature tests exist yet for `StatamicPageController` (component resolution, 404s), `EntryTransformer`/field transformers, `EntryListingQuery` pagination/ordering, or the JSON cache invalidation listeners. Worth prioritizing before adding more surface area (Taxonomies/Globals/Forms above), since each of those will be harder to change safely without a baseline.
 
+## Better Vue component typings for Inertia data
+
+Every page component currently types its props as `entry: { ..., data: Record<string, unknown> }` (see `Pages/Page.vue`, `Pages/Blog.vue`, and the "Adding a New Page Type" example in INERTIA.md), and block components hand-declare their own props with no link back to the fieldset that produced them (`types.d.ts`'s `Block extends Record<string, any>` is deliberately loose). This means a typo in a block's prop name, or a field renamed in a blueprint, silently produces `undefined` in Vue with no compile-time signal.
+
+Ideas, roughly in order of effort:
+
+- At minimum, per-blueprint TS interfaces that a project hand-maintains next to each blueprint (e.g. `types/blueprints/article.d.ts` exporting an `ArticleData` interface), with the page component prop typed as `entry: Entry<ArticleData>` using a shared generic `Entry<T>` helper type (replacing the current inline shape repeated in every page component and in INERTIA.md's example).
+- A generic per-block-type prop interface for each entry in `stubs/js-examples/*.vue`, replacing today's loose `Block`/`Record<string, any>` — e.g. exported `HeroBlock`, `CardGridBlock` interfaces in `types.d.ts` that each block component's `defineProps<T>()` references, so `Components/Blocks.vue`'s dynamic dispatch has *something* checkable on the authoring side even though the dispatch itself stays untyped (`v-bind="block"` can't be statically checked either way).
+- A longer-term, higher-effort option: generate TS types from the blueprint YAML itself (field handle → fieldtype → TS type mapping, reusing the same fieldtype-to-transformer-output mapping documented in INERTIA.md's "Entry Data & Transformers" table) via an `artisan` command, so blueprint changes and their TS types can't drift apart. Would need a decision on where generated files live (`resources/js/types/generated/`?) and whether it runs automatically (a build step / file watcher) or on demand.
+- Whatever shape this takes, it should cover the three prop shapes that currently exist ad hoc: entry page props (`entry.data`), block props (individual block fields spread via `v-bind`), and `EntryListingPreviewInterface`'s per-collection `preview` object (currently just `Record<string, any>` in `EntryListing.vue`/`Default.vue`).
+
 ## Open questions to revisit before starting any of the above
 
 - Should Taxonomies/Globals/Forms live in this addon at all, or should they be split into separate optional addons/packages, given `morhi/statamic-inertia` is meant to stay a thin bridge layer? (Per [[feedback_addon_vs_app_code]], new reusable feature logic belongs in the addon, but that doesn't settle whether it belongs in *this* addon vs. a sibling one.)
