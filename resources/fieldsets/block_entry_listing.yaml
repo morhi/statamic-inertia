@@ -1,0 +1,23 @@
+title: 'Block: Entry Listing'
+fields:
+  -
+    handle: heading
+    field:
+      type: text
+      display: Heading
+      instructions: 'Optional heading shown above the list.'
+  -
+    handle: collection
+    field:
+      type: collections
+      display: Collection
+      max_items: 1
+      required: true
+      validate: required
+  -
+    handle: per_page
+    field:
+      type: integer
+      display: 'Items per page'
+      default: 6
+      validate: 'required|integer|min:1|max:50'

@@ -23,7 +23,7 @@ usePreviewRefresh();
         </Link>
       </nav>
     </header>
-    <div class="pt-[73px]">
+    <div class="pt-[61px]">
       <slot />
     </div>
   </div>

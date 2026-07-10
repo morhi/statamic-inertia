@@ -44,3 +44,8 @@ fields:
               fields:
                 -
                   import: block_masonry_gallery
+            entry_listing:
+              display: 'Entry Listing'
+              fields:
+                -
+                  import: block_entry_listing

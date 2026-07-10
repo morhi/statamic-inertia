@@ -1,0 +1,7 @@
+title: Blog
+route: '/blog/{slug}'
+dated: true
+revisions: false
+date_behavior:
+  past: public
+  future: private

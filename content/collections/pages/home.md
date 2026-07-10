@@ -1,66 +1,12 @@
 ---
 id: home
 blueprint: pages
-title: 'This is my homepage'
+title: Homepage
 template: home
 author: dec72713-dc5a-45dc-9f82-4035fe14663d
 updated_by: dec72713-dc5a-45dc-9f82-4035fe14663d
-updated_at: 1774306505
+updated_at: 1783692470
 content_blocks:
-  -
-    id: sIiQcn3ScP9CXNQBZPgoL
-    type: text
-    enabled: true
-    content:
-      -
-        type: heading
-        attrs:
-          level: 2
-        content:
-          -
-            type: text
-            text: 'Hey, welcome to my homepage'
-      -
-        type: paragraph
-        content:
-          -
-            type: text
-            text: blubbbii
-      -
-        type: paragraph
-        content:
-          -
-            type: text
-            marks:
-              -
-                type: bold
-            text: afefwawefwafe
-  -
-    id: kmWa7Coxr-DoyqtqeaSRe
-    type: text
-    enabled: true
-    content:
-      -
-        type: bulletList
-        content:
-          -
-            type: listItem
-            content:
-              -
-                type: paragraph
-                content:
-                  -
-                    type: text
-                    text: aweffewaweffaweawffawefewa
-          -
-            type: listItem
-            content:
-              -
-                type: paragraph
-                content:
-                  -
-                    type: text
-                    text: hey
   -
     id: hero-block-001
     type: hero
@@ -70,6 +16,13 @@ content_blocks:
     background_image: viktor-forgacs-click-vng9kgg_era-unsplash.jpg
     cta_label: "See what's possible"
     cta_url: '#'
+  -
+    id: entry-listing-block-001
+    type: entry_listing
+    enabled: true
+    heading: 'From the blog'
+    collection: blog
+    per_page: 2
   -
     id: quote-block-001
     type: quote

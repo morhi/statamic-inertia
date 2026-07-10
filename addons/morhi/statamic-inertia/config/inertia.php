@@ -111,4 +111,21 @@ return [
 
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Entry Listing Block
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the "entry_listing" page-builder block's "Load more"
+    | pagination endpoint. This route is deliberately plain (non-Inertia) so
+    | it's never touched by the static/JSON caching layers.
+    |
+    */
+
+    'entry_listing' => [
+
+        'route' => env('INERTIA_ENTRY_LISTING_ROUTE', '/api/entry-listing'),
+
+    ],
+
 ];

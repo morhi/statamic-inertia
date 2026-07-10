@@ -6,3 +6,6 @@ preferences:
     pages:
       view: tree
       after_save: continue_editing
+    listing_mode: list
+    blog:
+      view: list

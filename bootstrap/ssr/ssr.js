@@ -1,5 +1,5 @@
-import { onMounted, onUnmounted, defineComponent, mergeProps, unref, withCtx, createTextVNode, toDisplayString, useSSRContext, ref, computed, nextTick, createVNode, resolveDynamicComponent, createSSRApp, h } from "vue";
-import { ssrRenderAttrs, ssrRenderComponent, ssrRenderList, ssrInterpolate, ssrRenderSlot, ssrRenderClass, ssrRenderAttr, ssrRenderTeleport, ssrRenderVNode, renderToString } from "vue/server-renderer";
+import { onMounted, onUnmounted, defineComponent, mergeProps, unref, withCtx, createTextVNode, toDisplayString, useSSRContext, ref, createVNode, resolveDynamicComponent, computed, nextTick, createSSRApp, h } from "vue";
+import { ssrRenderAttrs, ssrRenderComponent, ssrRenderList, ssrInterpolate, ssrRenderSlot, ssrRenderClass, ssrRenderAttr, ssrRenderVNode, ssrIncludeBooleanAttr, ssrRenderTeleport, renderToString } from "vue/server-renderer";
 import { usePage, router, Link, Head, createInertiaApp } from "@inertiajs/vue3";
 import createServer from "@inertiajs/vue3/server";
 const useInertiaPageProp = (prop) => {
@@ -14,7 +14,7 @@ const usePreviewRefresh = () => {
   onMounted(() => window.addEventListener("message", onPreviewMessage));
   onUnmounted(() => window.removeEventListener("message", onPreviewMessage));
 };
-const _sfc_main$9 = /* @__PURE__ */ defineComponent({
+const _sfc_main$c = /* @__PURE__ */ defineComponent({
   __name: "Layout",
   __ssrInlineRender: true,
   setup(__props) {
@@ -62,17 +62,17 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_setup$9 = _sfc_main$9.setup;
-_sfc_main$9.setup = (props, ctx) => {
+const _sfc_setup$c = _sfc_main$c.setup;
+_sfc_main$c.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Layout.vue");
-  return _sfc_setup$9 ? _sfc_setup$9(props, ctx) : void 0;
+  return _sfc_setup$c ? _sfc_setup$c(props, ctx) : void 0;
 };
-const __vite_glob_0_0$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_1$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$9
+  default: _sfc_main$c
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$8 = /* @__PURE__ */ defineComponent({
+const _sfc_main$b = /* @__PURE__ */ defineComponent({
   ...{ inheritAttrs: false },
   __name: "Accordion",
   __ssrInlineRender: true,
@@ -96,17 +96,17 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_setup$8 = _sfc_main$8.setup;
-_sfc_main$8.setup = (props, ctx) => {
+const _sfc_setup$b = _sfc_main$b.setup;
+_sfc_main$b.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Blocks/Accordion.vue");
-  return _sfc_setup$8 ? _sfc_setup$8(props, ctx) : void 0;
+  return _sfc_setup$b ? _sfc_setup$b(props, ctx) : void 0;
 };
-const __vite_glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_0$2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$8
+  default: _sfc_main$b
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$7 = /* @__PURE__ */ defineComponent({
+const _sfc_main$a = /* @__PURE__ */ defineComponent({
   ...{ inheritAttrs: false },
   __name: "CardGrid",
   __ssrInlineRender: true,
@@ -140,17 +140,111 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_setup$7 = _sfc_main$7.setup;
-_sfc_main$7.setup = (props, ctx) => {
+const _sfc_setup$a = _sfc_main$a.setup;
+_sfc_main$a.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Blocks/CardGrid.vue");
-  return _sfc_setup$7 ? _sfc_setup$7(props, ctx) : void 0;
+  return _sfc_setup$a ? _sfc_setup$a(props, ctx) : void 0;
 };
-const __vite_glob_0_1$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$7
+  default: _sfc_main$a
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$6 = /* @__PURE__ */ defineComponent({
+const _sfc_main$9 = /* @__PURE__ */ defineComponent({
+  ...{ inheritAttrs: false },
+  __name: "Default",
+  __ssrInlineRender: true,
+  props: {
+    entry: {}
+  },
+  setup(__props) {
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<a${ssrRenderAttrs(mergeProps({
+        href: __props.entry.url,
+        class: "block-entry-listing-default group py-4 border-b border-white/[0.07] flex items-baseline justify-between gap-4"
+      }, _attrs))}><h3 class="text-white font-medium group-hover:text-sky-400 transition-colors duration-200">${ssrInterpolate(__props.entry.title)}</h3>`);
+      if (__props.entry.date) {
+        _push(`<time${ssrRenderAttr("datetime", __props.entry.date)} class="text-gray-500 text-sm shrink-0">${ssrInterpolate(__props.entry.date)}</time>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`</a>`);
+    };
+  }
+});
+const _sfc_setup$9 = _sfc_main$9.setup;
+_sfc_main$9.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/EntryPreviews/Default.vue");
+  return _sfc_setup$9 ? _sfc_setup$9(props, ctx) : void 0;
+};
+const __vite_glob_0_0$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: _sfc_main$9
+}, Symbol.toStringTag, { value: "Module" }));
+const _sfc_main$8 = /* @__PURE__ */ defineComponent({
+  ...{ inheritAttrs: false },
+  __name: "EntryListing",
+  __ssrInlineRender: true,
+  props: {
+    heading: {},
+    collection: {},
+    per_page: {},
+    entries: {},
+    next_page: {},
+    has_more: { type: Boolean },
+    load_more_url: {}
+  },
+  setup(__props) {
+    const props = __props;
+    const previewModules = /* @__PURE__ */ Object.assign({ "../Components/EntryPreviews/Default.vue": __vite_glob_0_0$1 });
+    const previewMap = Object.fromEntries(
+      Object.entries(previewModules).map(([path, mod]) => {
+        const name = path.replace("../Components/EntryPreviews/", "").replace(".vue", "");
+        const handle = name.replace(/([A-Z])/g, "_$1").toLowerCase().replace(/^_/, "");
+        return [handle, mod.default];
+      })
+    );
+    const previewFor = (collection) => previewMap[collection] ?? previewMap["default"];
+    const items = ref([...props.entries]);
+    ref(props.next_page);
+    const hasMore = ref(props.has_more);
+    const loading = ref(false);
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "block-entry-listing py-20 px-8" }, _attrs))}><div class="max-w-3xl mx-auto">`);
+      if (__props.heading) {
+        _push(`<h2 class="text-2xl font-semibold text-white mb-8">${ssrInterpolate(__props.heading)}</h2>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<div class="flex flex-col"><!--[-->`);
+      ssrRenderList(items.value, (entry) => {
+        ssrRenderVNode(_push, createVNode(resolveDynamicComponent(previewFor(__props.collection)), {
+          key: entry.id,
+          entry
+        }, null), _parent);
+      });
+      _push(`<!--]--></div>`);
+      if (hasMore.value) {
+        _push(`<div class="mt-8 flex justify-center"><button type="button"${ssrIncludeBooleanAttr(loading.value) ? " disabled" : ""} class="px-5 py-2.5 rounded-full border border-white/[0.15] text-white text-sm font-medium hover:border-sky-400/40 hover:bg-white/[0.05] transition-colors duration-200 disabled:opacity-50">${ssrInterpolate(loading.value ? "Loading…" : "Load more")}</button></div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`</div></div>`);
+    };
+  }
+});
+const _sfc_setup$8 = _sfc_main$8.setup;
+_sfc_main$8.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Blocks/EntryListing.vue");
+  return _sfc_setup$8 ? _sfc_setup$8(props, ctx) : void 0;
+};
+const __vite_glob_0_2$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: _sfc_main$8
+}, Symbol.toStringTag, { value: "Module" }));
+const _sfc_main$7 = /* @__PURE__ */ defineComponent({
   ...{ inheritAttrs: false },
   __name: "Hero",
   __ssrInlineRender: true,
@@ -186,17 +280,17 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_setup$6 = _sfc_main$6.setup;
-_sfc_main$6.setup = (props, ctx) => {
+const _sfc_setup$7 = _sfc_main$7.setup;
+_sfc_main$7.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Blocks/Hero.vue");
-  return _sfc_setup$6 ? _sfc_setup$6(props, ctx) : void 0;
+  return _sfc_setup$7 ? _sfc_setup$7(props, ctx) : void 0;
 };
-const __vite_glob_0_2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$6
+  default: _sfc_main$7
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$5 = /* @__PURE__ */ defineComponent({
+const _sfc_main$6 = /* @__PURE__ */ defineComponent({
   ...{ inheritAttrs: false },
   __name: "ImageCaption",
   __ssrInlineRender: true,
@@ -222,17 +316,17 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_setup$5 = _sfc_main$5.setup;
-_sfc_main$5.setup = (props, ctx) => {
+const _sfc_setup$6 = _sfc_main$6.setup;
+_sfc_main$6.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Blocks/ImageCaption.vue");
-  return _sfc_setup$5 ? _sfc_setup$5(props, ctx) : void 0;
+  return _sfc_setup$6 ? _sfc_setup$6(props, ctx) : void 0;
 };
-const __vite_glob_0_3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$5
+  default: _sfc_main$6
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$4 = /* @__PURE__ */ defineComponent({
+const _sfc_main$5 = /* @__PURE__ */ defineComponent({
   __name: "MasonryGallery",
   __ssrInlineRender: true,
   props: {
@@ -333,18 +427,18 @@ const _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const _sfc_setup$4 = _sfc_main$4.setup;
-_sfc_main$4.setup = (props, ctx) => {
+const _sfc_setup$5 = _sfc_main$5.setup;
+_sfc_main$5.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Blocks/MasonryGallery.vue");
-  return _sfc_setup$4 ? _sfc_setup$4(props, ctx) : void 0;
+  return _sfc_setup$5 ? _sfc_setup$5(props, ctx) : void 0;
 };
-const MasonryGallery = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-7961fc15"]]);
-const __vite_glob_0_4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const MasonryGallery = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-7961fc15"]]);
+const __vite_glob_0_5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: MasonryGallery
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$3 = /* @__PURE__ */ defineComponent({
+const _sfc_main$4 = /* @__PURE__ */ defineComponent({
   ...{ inheritAttrs: false },
   __name: "Quote",
   __ssrInlineRender: true,
@@ -377,17 +471,17 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_setup$3 = _sfc_main$3.setup;
-_sfc_main$3.setup = (props, ctx) => {
+const _sfc_setup$4 = _sfc_main$4.setup;
+_sfc_main$4.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Blocks/Quote.vue");
-  return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
+  return _sfc_setup$4 ? _sfc_setup$4(props, ctx) : void 0;
 };
-const __vite_glob_0_5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$3
+  default: _sfc_main$4
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+const _sfc_main$3 = /* @__PURE__ */ defineComponent({
   ...{ inheritAttrs: false },
   __name: "Text",
   __ssrInlineRender: true,
@@ -400,24 +494,24 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_setup$2 = _sfc_main$2.setup;
-_sfc_main$2.setup = (props, ctx) => {
+const _sfc_setup$3 = _sfc_main$3.setup;
+_sfc_main$3.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Blocks/Text.vue");
-  return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
+  return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
 };
-const __vite_glob_0_6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$2
+  default: _sfc_main$3
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+const _sfc_main$2 = /* @__PURE__ */ defineComponent({
   __name: "Blocks",
   __ssrInlineRender: true,
   props: {
     blocks: Array
   },
   setup(__props) {
-    const modules = /* @__PURE__ */ Object.assign({ "../Blocks/Accordion.vue": __vite_glob_0_0, "../Blocks/CardGrid.vue": __vite_glob_0_1$1, "../Blocks/Hero.vue": __vite_glob_0_2, "../Blocks/ImageCaption.vue": __vite_glob_0_3, "../Blocks/MasonryGallery.vue": __vite_glob_0_4, "../Blocks/Quote.vue": __vite_glob_0_5, "../Blocks/Text.vue": __vite_glob_0_6 });
+    const modules = /* @__PURE__ */ Object.assign({ "../Blocks/Accordion.vue": __vite_glob_0_0$2, "../Blocks/CardGrid.vue": __vite_glob_0_1, "../Blocks/EntryListing.vue": __vite_glob_0_2$1, "../Blocks/Hero.vue": __vite_glob_0_3, "../Blocks/ImageCaption.vue": __vite_glob_0_4, "../Blocks/MasonryGallery.vue": __vite_glob_0_5, "../Blocks/Quote.vue": __vite_glob_0_6, "../Blocks/Text.vue": __vite_glob_0_7 });
     const blockMap = Object.fromEntries(
       Object.entries(modules).map(([path, mod]) => {
         const name = path.replace("../Blocks/", "").replace(".vue", "");
@@ -440,14 +534,54 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
     };
   }
 });
+const _sfc_setup$2 = _sfc_main$2.setup;
+_sfc_main$2.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/Blocks.vue");
+  return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
+};
+const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+  ...{ layout: _sfc_main$c },
+  __name: "Blog",
+  __ssrInlineRender: true,
+  props: {
+    entry: {}
+  },
+  setup(__props) {
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<!--[-->`);
+      _push(ssrRenderComponent(unref(Head), null, {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(`<title${_scopeId}>${ssrInterpolate(__props.entry.data.title)}</title>`);
+          } else {
+            return [
+              createVNode("title", null, toDisplayString(__props.entry.data.title), 1)
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
+      _push(`<main>`);
+      _push(ssrRenderComponent(_sfc_main$2, {
+        blocks: __props.entry.data.content_blocks
+      }, null, _parent));
+      _push(`</main><!--]-->`);
+    };
+  }
+});
 const _sfc_setup$1 = _sfc_main$1.setup;
 _sfc_main$1.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/Blocks.vue");
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Blog.vue");
   return _sfc_setup$1 ? _sfc_setup$1(props, ctx) : void 0;
 };
+const __vite_glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: _sfc_main$1
+}, Symbol.toStringTag, { value: "Module" }));
 const _sfc_main = /* @__PURE__ */ defineComponent({
-  ...{ layout: _sfc_main$9 },
+  ...{ layout: _sfc_main$c },
   __name: "Page",
   __ssrInlineRender: true,
   props: {
@@ -469,7 +603,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         _: 1
       }, _parent));
       _push(`<main>`);
-      _push(ssrRenderComponent(_sfc_main$1, {
+      _push(ssrRenderComponent(_sfc_main$2, {
         blocks: __props.entry.data.content_blocks
       }, null, _parent));
       _push(`</main><!--]-->`);
@@ -482,7 +616,7 @@ _sfc_main.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Pages/Page.vue");
   return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
 };
-const __vite_glob_0_1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const __vite_glob_0_2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: _sfc_main
 }, Symbol.toStringTag, { value: "Module" }));
@@ -491,7 +625,7 @@ createServer(
     page,
     render: renderToString,
     resolve: (name) => {
-      const pages = /* @__PURE__ */ Object.assign({ "./Pages/Layout.vue": __vite_glob_0_0$1, "./Pages/Pages/Page.vue": __vite_glob_0_1 });
+      const pages = /* @__PURE__ */ Object.assign({ "./Pages/Blog.vue": __vite_glob_0_0, "./Pages/Layout.vue": __vite_glob_0_1$1, "./Pages/Pages/Page.vue": __vite_glob_0_2 });
       return pages[`./Pages/${name}.vue`];
     },
     setup({ App, props, plugin }) {
