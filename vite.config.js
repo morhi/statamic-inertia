@@ -10,7 +10,13 @@ export default defineConfig({
             ssr: 'resources/js/ssr.js',
             refresh: true,
         }),
-        vue(),
+        vue({
+            template: {
+                compilerOptions: {
+                    comments: false,
+                },
+            },
+        }),
         tailwindcss(),
     ],
     server: {

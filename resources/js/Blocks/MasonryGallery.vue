@@ -16,7 +16,7 @@
     </div>
 
     <Transition name="fade">
-      <Teleport to="body">
+      <Teleport to="body" :disabled="!mounted">
         <div v-if="lightboxOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" @click.self="closeLightbox">
           <button class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors" @click.stop="closeLightbox">
             <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M18 6L6 18M6 6l12 12"/></svg>
@@ -54,6 +54,7 @@ const props = defineProps<{
 const lightboxOpen = ref(false);
 const currentIndex = ref(0);
 const slideDirection = ref<'next' | 'prev'>('next');
+const mounted = ref(false);
 let keyboardListener: ((e: KeyboardEvent) => void) | null = null;
 
 const containerClasses = computed(() => {
@@ -102,6 +103,8 @@ function onImageLoad(index: number, e: Event) {
 }
 
 onMounted(() => {
+  mounted.value = true;
+
   const observer = new IntersectionObserver(
     (entries) => entries.forEach((entry) => {
       if (entry.isIntersecting && !(entry.target as HTMLElement).classList.contains('opacity-100')) {

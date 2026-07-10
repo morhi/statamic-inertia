@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted as onUnmounted$1, defineComponent, mergeProps, unref, withCtx, createTextVNode, toDisplayString, useSSRContext, ref, computed, nextTick, createVNode, resolveDynamicComponent, createSSRApp, h } from "vue";
+import { onMounted, onUnmounted, defineComponent, mergeProps, unref, withCtx, createTextVNode, toDisplayString, useSSRContext, ref, computed, nextTick, createVNode, resolveDynamicComponent, createSSRApp, h } from "vue";
 import { ssrRenderAttrs, ssrRenderComponent, ssrRenderList, ssrInterpolate, ssrRenderSlot, ssrRenderClass, ssrRenderAttr, ssrRenderTeleport, ssrRenderVNode, renderToString } from "vue/server-renderer";
 import { usePage, router, Link, Head, createInertiaApp } from "@inertiajs/vue3";
 import createServer from "@inertiajs/vue3/server";
@@ -12,7 +12,7 @@ const usePreviewRefresh = () => {
     router.reload({ headers: { "X-Statamic-Token": e.data.token } });
   }
   onMounted(() => window.addEventListener("message", onPreviewMessage));
-  onUnmounted$1(() => window.removeEventListener("message", onPreviewMessage));
+  onUnmounted(() => window.removeEventListener("message", onPreviewMessage));
 };
 const _sfc_main$9 = /* @__PURE__ */ defineComponent({
   __name: "Layout",
@@ -243,6 +243,8 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     const props = __props;
     const lightboxOpen = ref(false);
     const currentIndex = ref(0);
+    const slideDirection = ref("next");
+    const mounted = ref(false);
     let keyboardListener = null;
     const containerClasses = computed(() => {
       const cols = props.column_count === "two" ? "columns-2" : props.column_count === "four" ? "columns-4" : "columns-3";
@@ -261,11 +263,13 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     function prev() {
       const len = getImageList().length;
       if (len === 0) return;
+      slideDirection.value = "prev";
       currentIndex.value = (currentIndex.value - 1 + len) % len;
     }
     function next() {
       const len = getImageList().length;
       if (len === 0) return;
+      slideDirection.value = "next";
       currentIndex.value = (currentIndex.value + 1) % len;
     }
     function onImageLoad(index, e) {
@@ -275,6 +279,7 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
       el.classList.add("opacity-100", "translate-y-0");
     }
     onMounted(() => {
+      mounted.value = true;
       const observer = new IntersectionObserver(
         (entries) => entries.forEach((entry) => {
           if (entry.isIntersecting && !entry.target.classList.contains("opacity-100")) {
@@ -299,24 +304,24 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
       if (keyboardListener) window.removeEventListener("keyup", keyboardListener);
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "block-masonry-gallery py-24 px-8" }, _attrs))} data-v-57225447><div class="${ssrRenderClass(containerClasses.value)}" id="masonry-container" data-v-57225447><!--[-->`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "block-masonry-gallery py-24 px-8" }, _attrs))} data-v-7961fc15><div class="${ssrRenderClass(containerClasses.value)}" id="masonry-container" data-v-7961fc15><!--[-->`);
       ssrRenderList(__props.images, (image, index) => {
-        _push(`<img${ssrRenderAttr("src", image.thumb_url)}${ssrRenderAttr("srcset", image.srcset)} sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"${ssrRenderAttr("alt", image.alt || "")} loading="lazy" class="w-full cursor-zoom-in rounded-xl opacity-0 translate-y-4 transition-all duration-700 [break-inside:avoid] mb-4 masonry-item" data-v-57225447>`);
+        _push(`<img${ssrRenderAttr("src", image.thumb_url)}${ssrRenderAttr("srcset", image.srcset)} sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"${ssrRenderAttr("alt", image.alt || "")} loading="lazy" class="w-full cursor-zoom-in rounded-xl opacity-0 translate-y-4 transition-all duration-700 [break-inside:avoid] mb-4 masonry-item" data-v-7961fc15>`);
       });
       _push(`<!--]--></div>`);
       ssrRenderTeleport(_push, (_push2) => {
         if (lightboxOpen.value) {
-          _push2(`<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" data-v-57225447><button class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors" data-v-57225447><svg width="32" height="32" fill="none" viewBox="0 0 24 24" data-v-57225447><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M18 6L6 18M6 6l12 12" data-v-57225447></path></svg></button><button class="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-2" data-v-57225447><svg width="28" height="28" fill="none" viewBox="0 0 24 24" data-v-57225447><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6" data-v-57225447></path></svg></button>`);
+          _push2(`<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" data-v-7961fc15><button class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors" data-v-7961fc15><svg width="32" height="32" fill="none" viewBox="0 0 24 24" data-v-7961fc15><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M18 6L6 18M6 6l12 12" data-v-7961fc15></path></svg></button><button class="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-2" data-v-7961fc15><svg width="28" height="28" fill="none" viewBox="0 0 24 24" data-v-7961fc15><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6" data-v-7961fc15></path></svg></button><div class="relative w-[90vw] h-[80vh] overflow-hidden" data-v-7961fc15>`);
           if (currentSrc.value) {
-            _push2(`<img${ssrRenderAttr("src", currentSrc.value)}${ssrRenderAttr("alt", currentAlt.value)} class="max-h-[80vh] max-w-[90vw] object-contain rounded-xl shadow-2xl" data-v-57225447>`);
+            _push2(`<img${ssrRenderAttr("src", currentSrc.value)}${ssrRenderAttr("alt", currentAlt.value)} class="absolute inset-0 w-full h-full object-contain rounded-xl shadow-2xl" data-v-7961fc15>`);
           } else {
             _push2(`<!---->`);
           }
-          _push2(`<button class="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-2" data-v-57225447><svg width="28" height="28" fill="none" viewBox="0 0 24 24" data-v-57225447><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6" data-v-57225447></path></svg></button><div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium" data-v-57225447>${ssrInterpolate(currentIndex.value + 1)} / ${ssrInterpolate(__props.images.length)}</div></div>`);
+          _push2(`</div><button class="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-2" data-v-7961fc15><svg width="28" height="28" fill="none" viewBox="0 0 24 24" data-v-7961fc15><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6" data-v-7961fc15></path></svg></button><div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium" data-v-7961fc15>${ssrInterpolate(currentIndex.value + 1)} / ${ssrInterpolate(__props.images.length)}</div></div>`);
         } else {
           _push2(`<!---->`);
         }
-      }, "body", false, _parent);
+      }, "body", !mounted.value, _parent);
       _push(`</div>`);
     };
   }
@@ -334,7 +339,7 @@ _sfc_main$4.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Blocks/MasonryGallery.vue");
   return _sfc_setup$4 ? _sfc_setup$4(props, ctx) : void 0;
 };
-const MasonryGallery = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-57225447"]]);
+const MasonryGallery = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-7961fc15"]]);
 const __vite_glob_0_4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: MasonryGallery

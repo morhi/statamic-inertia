@@ -7,8 +7,8 @@ content_blocks:
     id: about-hero-001
     type: hero
     enabled: true
-    title: 'About Uss'
-    subtitle: 'We build thoughtful digital experiences using modern tools and a craftsman mindset.'
+    title: 'About Us'
+    subtitle: 'We build thoughtful digital experiences using modern tools and a craftsman mindset. I can even popout the live preview and it updates instantly like hot reload!'
     background_image: marek-piwnicki-j9rf6ctw_q0-unsplash.jpg
     cta_label: 'See our work'
     cta_url: /work
@@ -53,7 +53,7 @@ content_blocks:
         content:
           -
             type: text
-            text: 'Simplicity is the ultimate sophistication.'
+            text: 'Simplicity is the ultimate sophistication! So cool, scroll position just stays where it is!'
     author: 'Leonardo da Vinci'
     author_image: leon-rohrwild-5apkpfvda8i-unsplash.jpg
   -
@@ -65,14 +65,14 @@ content_blocks:
         id: about-acc-001
         type: item
         enabled: true
-        question: 'What services do you offer?'
+        question: 'Do you know what services we offer?'
         answer:
           -
             type: paragraph
             content:
               -
                 type: text
-                text: 'We design and build websites, web applications, and digital products — from concept to deployment.'
+                text: 'We design and build beautiful websites, web applications, and digital products — from concept to deployment.'
       -
         id: about-acc-002
         type: item
@@ -87,5 +87,5 @@ content_blocks:
                 text: 'We work closely with clients through short feedback loops, weekly check-ins, and transparent project tracking.'
 author: dec72713-dc5a-45dc-9f82-4035fe14663d
 updated_by: dec72713-dc5a-45dc-9f82-4035fe14663d
-updated_at: 1783673178
+updated_at: 1783675613
 ---
