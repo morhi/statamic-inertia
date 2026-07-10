@@ -25,6 +25,10 @@ class InertiaJsonCache
             return false;
         }
 
+        if ($request->isLivePreview()) {
+            return false;
+        }
+
         if (!str_contains($response->headers->get('Content-Type', ''), 'application/json')) {
             return false;
         }
