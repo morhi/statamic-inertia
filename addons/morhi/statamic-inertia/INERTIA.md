@@ -16,15 +16,16 @@ For installation instructions, see [README.md](README.md). This document covers 
 6. [Page Component Resolution](#page-component-resolution)
 7. [Entry Data & Transformers](#entry-data--transformers)
 8. [Block Builder](#block-builder)
-9. [Navigation](#navigation)
-10. [Image Handling (Glide)](#image-handling-glide)
-11. [Shared Props](#shared-props)
-12. [Caching](#caching)
-13. [Statamic Live Preview](#statamic-live-preview)
-14. [Development Setup](#development-setup)
-15. [SSR Setup](#ssr-setup)
-16. [Adding a New Page Type](#adding-a-new-page-type)
-17. [Adding a New Block](#adding-a-new-block)
+9. [Entry Listing Block](#entry-listing-block)
+10. [Navigation](#navigation)
+11. [Image Handling (Glide)](#image-handling-glide)
+12. [Shared Props](#shared-props)
+13. [Caching](#caching)
+14. [Statamic Live Preview](#statamic-live-preview)
+15. [Development Setup](#development-setup)
+16. [SSR Setup](#ssr-setup)
+17. [Adding a New Page Type](#adding-a-new-page-type)
+18. [Adding a New Block](#adding-a-new-block)
 
 ---
 
@@ -95,27 +96,39 @@ addons/morhi/statamic-inertia/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── InertiaController.php      # Abstract base: view(), resolveComponent()
-│   │   │   └── StatamicPageController.php # Resolves any URL to an Inertia page
+│   │   │   ├── StatamicPageController.php # Resolves any URL to an Inertia page
+│   │   │   └── EntryListingController.php # Plain JSON "load more" pagination endpoint
 │   │   └── Middleware/
 │   │       ├── HandleInertiaRequests.php  # Shared props, nav, no-store cache header
-│   │       ├── InertiaAwareStaticCache.php # Prevents Statamic static cache on XHR
+│   │       ├── InertiaAwareStaticCache.php # Skips static cache on XHR, marks SSR-failed pages uncacheable, sets X-Cache-Status
 │   │       └── InertiaJsonCache.php       # Caches Inertia JSON responses to disk
 │   ├── Listeners/
-│   │   └── InvalidateInertiaJsonCache.php # Deletes stale JSON cache on content change (auto-discovered)
+│   │   ├── InvalidateInertiaJsonCache.php # Deletes stale JSON cache on content change (auto-discovered)
+│   │   └── InvalidateCollectionListingCache.php # Busts collection:{handle} tag on entry save/delete, closing the "new entry" cache-tracker gap
 │   └── Support/
 │       ├── EntryTransformer.php           # Transforms Statamic entry fields to JS-safe values
 │       ├── DataProviders/
 │       │   ├── EntryDataInterface.php     # Contract for custom data providers
 │       │   ├── AbstractEntryData.php      # Base class with transformer access
 │       │   └── EntryDataRegistry.php      # Maps blueprint/entry → custom data provider
+│       ├── Blocks/
+│       │   ├── BlockResolverInterface.php # Contract: resolve(Values $set): array
+│       │   └── BlockResolverRegistry.php  # Maps a replicator set handle → custom PHP resolver
+│       ├── EntryListing/
+│       │   ├── EntryListingQuery.php      # Paginated, tag-tracked entry query for a collection
+│       │   ├── EntryListingBlockResolver.php # BlockResolverInterface impl backing the entry_listing block
+│       │   ├── EntryListingPreviewInterface.php # Contract: preview(Entry): array
+│       │   └── EntryListingPreviewRegistry.php  # Maps collection handle → custom preview provider
+│       ├── Ssr/
+│       │   └── SsrTrackingGateway.php     # Wraps Inertia's SSR gateway to expose per-request success/failure
 │       └── Transformers/
 │           ├── FieldTransformerInterface.php # Contract: transform(Value): mixed
 │           ├── AssetsTransformer.php      # assets fields → { url, srcset, alt }
 │           ├── BardTransformer.php        # bard fields → HTML string
-│           ├── ReplicatorTransformer.php  # replicator fields → array of sets
+│           ├── ReplicatorTransformer.php  # replicator fields → array of sets (or resolver output, see BlockResolverRegistry)
 │           └── SelectTransformer.php      # select fields → raw value(s)
 ├── routes/
-│   └── web.php                            # Self-contained catch-all route, registers with 'statamic.inertia' middleware
+│   └── web.php                            # 'load more' JSON route + catch-all route, registers with 'statamic.inertia' middleware
 └── stubs/                                 # Source files for each publish() group — copied into the host project
     ├── js/                                # tag: statamic-inertia-scaffold
     │   ├── app.js                         # Client-side Inertia bootstrap (SSR hydration)
@@ -131,9 +144,11 @@ addons/morhi/statamic-inertia/
     │   └── Components/
     │       └── Blocks.vue                 # Renders block array by type
     ├── js-examples/                       # tag: statamic-inertia-examples → resources/js/Blocks/
-    │   ├── Text.vue, Hero.vue, Quote.vue, CardGrid.vue, Accordion.vue, ImageCaption.vue, MasonryGallery.vue
+    │   ├── Text.vue, Hero.vue, Quote.vue, CardGrid.vue, Accordion.vue, ImageCaption.vue, MasonryGallery.vue, EntryListing.vue
+    ├── entry-listing-examples/            # tag: statamic-inertia-examples → resources/js/Components/EntryPreviews/
+    │   └── EntryPreviews/Default.vue      # Fallback preview card for entry_listing block
     ├── fieldsets-examples/                # tag: statamic-inertia-examples → resources/fieldsets/
-    │   └── block_builder.yaml, block_*.yaml
+    │   └── block_builder.yaml, block_*.yaml (incl. block_entry_listing.yaml)
     ├── blueprints-examples/                # tag: statamic-inertia-examples → resources/blueprints/collections/pages/
     │   └── page.yaml
     ├── views/                             # tag: statamic-inertia-views → resources/views/
@@ -156,7 +171,7 @@ Everything that must physically live in the host project (Vite can only build fi
 |---|---|---|
 | `statamic-inertia-config` | `config/inertia.php` | `inertiajs/inertia-laravel` config (also auto-merged, so it works even unpublished) |
 | `statamic-inertia-scaffold` | `resources/js/` | Core bootstrap: `app.js`, `ssr.js`, `types.d.ts`, `utils/`, `Pages/Layout.vue`, `Pages/Pages/Page.vue`, `Components/Blocks.vue` |
-| `statamic-inertia-examples` | `resources/js/Blocks/`, `resources/fieldsets/`, `resources/blueprints/collections/pages/` | Optional starter blocks + matching fieldsets/blueprint — safe to delete or replace |
+| `statamic-inertia-examples` | `resources/js/Blocks/`, `resources/js/Components/EntryPreviews/`, `resources/fieldsets/`, `resources/blueprints/collections/pages/` | Optional starter blocks (incl. `entry_listing`) + matching fieldsets/blueprint + fallback entry-listing preview card — safe to delete or replace |
 | `statamic-inertia-views` | `resources/views/` | Root Antlers template + Blade partials |
 | `statamic-inertia-project-files` | `vite.config.js`, `package.json` | Vite config and npm dependencies |
 
@@ -319,12 +334,37 @@ Pages use a Replicator field (`content_blocks`) that supports multiple block typ
 | `accordion` | `items` (nested replicator with `question`, `answer` bard) | `Blocks/Accordion.vue` |
 | `image_caption` | `image` (asset), `caption`, `alignment` | `Blocks/ImageCaption.vue` |
 | `masonry_gallery` | `column_count` (select), `images` (assets, unlimited) | `Blocks/MasonryGallery.vue` |
+| `entry_listing` | `heading`, `collection` (collections, max 1), `per_page` (integer) | `Blocks/EntryListing.vue` — see [Entry Listing Block](#entry-listing-block) |
 
 ### Data flow
 
 1. `ReplicatorTransformer` iterates over each set in `content_blocks`
-2. For each field in a set, it retrieves the raw `Value` from the proxied Statamic collection and dispatches to the matching transformer
-3. The result is a plain PHP array passed to `entry.data.content_blocks` in the Inertia prop
+2. For each set, it checks `BlockResolverRegistry` for a resolver registered against that set's handle (see below). If one is found, the resolver's output is used instead of the generic per-field transform.
+3. Otherwise, for each field in the set, it retrieves the raw `Value` from the proxied Statamic collection and dispatches to the matching field transformer
+4. The result is a plain PHP array passed to `entry.data.content_blocks` in the Inertia prop
+
+### BlockResolverInterface / BlockResolverRegistry
+
+Most blocks are a straight 1:1 mapping of fields to props, which the default per-field transform in step 3 above handles on its own. Some blocks need PHP-computed data instead — e.g. the `entry_listing` block needs to run a query rather than just pass its own fields through. `BlockResolverInterface::resolve(Values $set): array` is the escape hatch for that case; `BlockResolverRegistry::forSet($handle, $resolverClass)` maps a replicator set handle to a resolver class.
+
+```php
+namespace Morhi\StatamicInertia\Support\Blocks;
+
+use Statamic\Fields\Values;
+
+interface BlockResolverInterface
+{
+    public function resolve(Values $set): array;
+}
+```
+
+`entry_listing` is registered out of the box in `ServiceProvider::bootEntryListingBlock()`:
+
+```php
+app(BlockResolverRegistry::class)->forSet('entry_listing', EntryListingBlockResolver::class);
+```
+
+A project can point a different resolver at the same handle, or register a resolver for its own custom block, from its own `AppServiceProvider::boot()` — the registry is a singleton, so a later call simply overwrites the mapping for that handle. `ReplicatorTransformer` also merges in the set's own `id` and `type` (block handle) ahead of whatever the resolver returns, so both generic and resolver-backed blocks end up with the same baseline shape on the Vue side.
 
 ### Vue rendering
 
@@ -382,6 +422,90 @@ defineProps<{
 ```
 
 No changes to `Components/Blocks.vue` are required. Global types (`AssetField`, `Blocks`, `Block`) are declared in `resources/js/types.d.ts`.
+
+---
+
+## Entry Listing Block
+
+`entry_listing` is a page-builder block (see [Block Builder](#block-builder)) that lists entries from a chosen collection with a "Load more" button, fetching further pages outside the page cache rather than through a full Inertia navigation.
+
+### Fieldset
+
+`resources/fieldsets/block_entry_listing.yaml`: `heading` (text, optional), `collection` (`collections` fieldtype, `max_items: 1`, required), `per_page` (integer, default `6`, `max:50`).
+
+### EntryListingBlockResolver
+
+Registered against the `entry_listing` set handle (see [BlockResolverInterface / BlockResolverRegistry](#block-builder)). On initial page render it:
+
+1. Unwraps the block's `collection` field to a plain handle string — the `collections` fieldtype's augmented value is a hydrated `Collection` model, not the handle, so it reads the raw stored value the same way `Values::toArray()` does internally.
+2. Calls `EntryListingQuery::paginate($collectionHandle, $perPage, 1)` for page 1.
+3. Merges the query result with the block's own fields and a `load_more_url` (from `config('inertia.entry_listing.route')`):
+
+```json
+{
+  "heading": "Latest posts",
+  "collection": "blog",
+  "per_page": 6,
+  "load_more_url": "/api/entry-listing",
+  "entries": [{ "id": "...", "title": "...", "url": "...", "date": "2026-01-01", "preview": {} }],
+  "next_page": 2,
+  "has_more": true
+}
+```
+
+### EntryListingQuery
+
+Queries published entries in the given collection for the current site, ordered by `date desc` then `id asc`. The `id` tiebreaker matters because `date` is nullable and not guaranteed unique (e.g. entries created before a collection had `dated: true`) — without it, two "Load more" page requests could return entries in a different order, causing pagination to repeat or skip entries. Each entry is mapped to `{ id, title, url, date, preview }`, where `preview` comes from `EntryListingPreviewRegistry` (see below). If `thoughtco/statamic-cache-tracker` is installed, it also dispatches `TrackContentTags` for `collection:{handle}` and `{handle}:{id}`, tagging the rendering page for cache invalidation.
+
+### EntryListingPreviewInterface / EntryListingPreviewRegistry
+
+Lets a project add extra fields to each listed entry's `preview` object beyond the baseline `id`/`title`/`url`/`date` — e.g. an excerpt, author, or thumbnail. Register per collection, e.g. in `AppServiceProvider::boot()`:
+
+```php
+app(\Morhi\StatamicInertia\Support\EntryListing\EntryListingPreviewRegistry::class)
+    ->forCollection('blog', BlogEntryPreview::class);
+```
+
+```php
+use Morhi\StatamicInertia\Support\EntryListing\EntryListingPreviewInterface;
+use Statamic\Contracts\Entries\Entry;
+
+class BlogEntryPreview implements EntryListingPreviewInterface
+{
+    public function preview(Entry $entry): array
+    {
+        return ['excerpt' => $entry->get('excerpt')];
+    }
+}
+```
+
+If no provider is registered for a collection, `preview` is an empty array.
+
+### "Load more" endpoint
+
+`EntryListingController` is mounted at `config('inertia.entry_listing.route')` (default `/api/entry-listing`, overridable via `INERTIA_ENTRY_LISTING_ROUTE`) in `routes/web.php`, deliberately outside the `statamic.inertia` middleware group and the wildcard route. It returns plain JSON (not an Inertia response), so it is never touched by `InertiaAwareStaticCache` or `InertiaJsonCache` and always serves fresh data. It validates `collection` (must be a real, existing collection handle), `page`, and `per_page` (`max:50`), then calls the same `EntryListingQuery::paginate()`.
+
+### Cache invalidation gap it closes
+
+Statamic's cache-tracker normally invalidates a cached page only by the specific `{collection}:{id}` tags it was rendered with. A brand-new entry — not yet tagged on any page — would never bust a listing page that should now include it. `InvalidateCollectionListingCache` (an auto-discovered listener on `EntrySaved`/`EntryDeleted`) closes this by also invalidating the broader `collection:{handle}` tag whenever any entry in that collection is saved or deleted.
+
+### Vue: EntryListing.vue and per-collection previews
+
+`resources/js/Blocks/EntryListing.vue` (published by `statamic-inertia-examples`) renders the initial `entries` from props, then on "Load more" click fetches the next page from `load_more_url` via `fetch()`, appending results to a local `items` ref (client-side state, not a further Inertia prop update).
+
+Each entry is rendered through a per-collection preview component, auto-discovered the same way `Components/Blocks.vue` discovers blocks:
+
+```ts
+const previewModules = import.meta.glob('../Components/EntryPreviews/*.vue', { eager: true })
+```
+
+Filenames are mapped PascalCase → snake_case (e.g. `Blog.vue` → `blog`) to a collection handle, falling back to `EntryPreviews/Default.vue` if no collection-specific component exists. `Default.vue` (published by `statamic-inertia-examples` to `resources/js/Components/EntryPreviews/`) renders a title and date.
+
+### Adding a preview for a collection
+
+1. Create `resources/js/Components/EntryPreviews/{Collection}.vue`, named in PascalCase matching the collection handle (e.g. `Blog.vue` for the `blog` collection).
+2. It receives the same `entry: { id, title, url, date?, preview? }` prop shape as `Default.vue` — no registration step needed on the Vue side.
+3. If the preview needs extra PHP-side data beyond the baseline fields, also register an `EntryListingPreviewRegistry::forCollection()` provider as shown above.
 
 ---
 
@@ -484,12 +608,15 @@ Two caching layers work in tandem.
 
 On full page loads, Statamic's static cache middleware can write fully rendered HTML to `public/static/`. `InertiaAwareStaticCache` extends it to skip this for Inertia XHR requests (identified by the `X-Inertia` header), preventing JSON payloads from being written as `.html` files.
 
+It also protects against caching a **degraded** page: if SSR was configured to run (`config('inertia.ssr.enabled')`) but the SSR server was unreachable or errored, the response was served without pre-rendered markup. `InertiaAwareStaticCache` detects this via `SsrTrackingGateway::dispatchFailed()` (see below) and marks the response `X-Statamic-Uncacheable: true`, so Statamic's own `Cache::shouldBeCached()` skips writing it to disk. Without this, a single SSR outage could get baked into the static cache and keep serving a degraded page to everyone until the cache is next invalidated — long after SSR recovers.
+
 ### 2. Inertia JSON Cache
 
 `InertiaJsonCache` caches Inertia's JSON responses to `public/static/json/{uri}_.json`. NGINX serves these files directly on subsequent navigation requests, bypassing PHP entirely.
 
 Files are invalidated by:
 - Content changes via `InvalidateInertiaJsonCache`, which listens to Statamic's `UrlInvalidated` event (auto-discovered from `src/Listeners/`)
+- `InvalidateCollectionListingCache` (also in `src/Listeners/`), which additionally busts the `collection:{handle}` cache-tracker tag on `EntrySaved`/`EntryDeleted` — see [Entry Listing Block](#entry-listing-block) for why this is needed on top of the tag-based invalidation above
 - Running `php artisan statamic:static:clear` or `cache-tracker:flush`, which deletes the entire `public/static/json/` directory (registered as a `CommandFinished` listener in `ServiceProvider::bootAddon()`)
 
 ```
@@ -500,6 +627,18 @@ ddev php artisan statamic:static:clear
 ### Cache-Control for Inertia responses
 
 `HandleInertiaRequests::handle()` adds `Cache-Control: no-store` to all Inertia JSON responses, preventing browsers from serving a stale JSON payload when the user navigates using the back button.
+
+### X-Cache-Status header
+
+Every response carries an `X-Cache-Status` header for debugging which cache layer (if any) served it:
+
+| Value | Set by | Meaning |
+|---|---|---|
+| `HIT` | NGINX (`.ddev/nginx_full/nginx-site.conf`) | Served directly from a static file on disk (`public/static/` or `public/static/json/`) — PHP never ran |
+| `MISS` | `InertiaAwareStaticCache` | Request reached PHP; a normal, cacheable `GET` response |
+| `BYPASS` | `InertiaAwareStaticCache` | Request reached PHP but is inherently uncacheable — non-`GET`, or a live preview request |
+
+NGINX can only set the header on the path where it serves a cached file straight from disk: any `try_files ... /index.php` fallback re-enters the server block's rewrite phase from scratch, so an nginx variable or `add_header` set before that fallback does not survive into the eventual PHP-handled response. That's why `HIT` is set exclusively by NGINX, while `MISS`/`BYPASS` are set by the Laravel middleware instead — the two never overlap for a single response.
 
 ---
 
@@ -570,6 +709,10 @@ ddev php artisan inertia:start-ssr
 This starts the Node.js SSR server using the built `bootstrap/ssr/ssr.js` bundle. The server must be running for SSR to work; without it, Inertia falls back to client-side rendering.
 
 In production, manage this process with a supervisor or pm2 to keep it alive.
+
+### SSR failure tracking
+
+`SsrTrackingGateway` (`ServiceProvider::bootSsrTracking()`) wraps Inertia's own `Gateway` binding to record, per request, whether SSR was attempted (`config('inertia.ssr.enabled')`) and whether it actually returned a response. This is needed because the `@inertia`/`@inertiaHead` Blade directives call `Gateway::dispatch()` themselves and only expose the result to a local view variable — nothing else in the request lifecycle can otherwise observe whether SSR rendered successfully. `InertiaAwareStaticCache` reads `dispatchFailed()` off this same singleton afterward to avoid statically caching a page that fell back to client-side rendering — see [Caching](#caching).
 
 ### SSR configuration
 
