@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Middleware;
+use Morhi\StatamicInertia\Support\CurrentEntryResolver;
+use Morhi\StatamicInertia\Support\Globals\GlobalsResolver;
 use Statamic\Facades\Cascade;
 use Statamic\Facades\Nav;
 use Statamic\Facades\Site;
@@ -19,6 +21,11 @@ class HandleInertiaRequests extends Middleware
      * @see https://inertiajs.com/server-side-setup#root-template
      */
     protected $rootView = 'layout';
+
+    public function __construct(
+        private CurrentEntryResolver $entryResolver,
+        private GlobalsResolver $globalsResolver,
+    ) {}
 
     public function handle(Request $request, Closure $next): mixed
     {
@@ -46,7 +53,8 @@ class HandleInertiaRequests extends Middleware
         // Hydrate Cascade so Statamic globals are available in Antlers templates.
         Cascade::instance()->hydrate();
 
-        $site = Site::current() ?? Site::default();
+        $site  = Site::current() ?? Site::default();
+        $entry = $this->entryResolver->resolve($request);
 
         $nav = Inertia::once(function () use ($site) {
             return Nav::findByHandle('main')
@@ -60,10 +68,13 @@ class HandleInertiaRequests extends Middleware
                 ->all() ?? [];
         });
 
+        $globals = Inertia::once(fn () => $this->globalsResolver->resolve($site, $entry));
+
         return array_merge([
-            'site'   => $site->handle(),
-            'locale' => $site->shortLocale(),
-            'nav'    => $nav,
+            'site'    => $site->handle(),
+            'locale'  => $site->shortLocale(),
+            'nav'     => $nav,
+            'globals' => $globals,
         ], parent::share($request));
     }
 }

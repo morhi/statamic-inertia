@@ -36,7 +36,7 @@
             <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/></svg>
           </button>
 
-          <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium">{{ currentIndex + 1 }} / {{ images.length }}</div>
+          <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium">{{ currentIndex + 1 }} / {{ images?.length ?? '0' }}</div>
         </div>
       </Teleport>
     </Transition>

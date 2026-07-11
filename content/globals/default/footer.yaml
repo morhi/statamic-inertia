@@ -1,0 +1,22 @@
+company_name: Studio
+company_address: |-
+  1200 Design Ave, Suite 4
+  Portland, OR 97205
+social_links:
+  -
+    type: social_link
+    platform: Twitter
+    url: 'https://twitter.com/studio'
+    id: dd30f800-a08d-4824-ac00-25f41c006ca7
+  -
+    type: social_link
+    platform: Instagram
+    url: 'https://instagram.com/studio'
+    id: cbf96467-0a2e-4d56-9eb0-89f457d62a18
+  -
+    type: social_link
+    platform: GitHub
+    url: 'https://github.com/studio'
+    id: 9f128f14-dcfd-4531-9daa-3d49b8b5d942
+newsletter_label: 'Enjoying the blog? Get new posts by email.'
+newsletter_cta_url: /subscribe

@@ -12,7 +12,7 @@ const props = defineProps<{
     slug: string
     collection: string
     blueprint: string
-    data: Record<string, unknown>
+    data: Record<string, any>
   }
 }>()
 </script>

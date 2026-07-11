@@ -1,10 +1,68 @@
-import { onMounted, onUnmounted, defineComponent, mergeProps, unref, withCtx, createTextVNode, toDisplayString, useSSRContext, ref, createVNode, resolveDynamicComponent, computed, nextTick, createSSRApp, h } from "vue";
-import { ssrRenderAttrs, ssrRenderComponent, ssrRenderList, ssrInterpolate, ssrRenderSlot, ssrRenderClass, ssrRenderAttr, ssrRenderVNode, ssrIncludeBooleanAttr, ssrRenderTeleport, renderToString } from "vue/server-renderer";
-import { usePage, router, Link, Head, createInertiaApp } from "@inertiajs/vue3";
+import { defineComponent, mergeProps, unref, withCtx, createVNode, useSSRContext, onMounted, onUnmounted, createTextVNode, toDisplayString, ref, resolveDynamicComponent, openBlock, createBlock, createCommentVNode, computed, nextTick, createSSRApp, h } from "vue";
+import { ssrRenderAttrs, ssrInterpolate, ssrRenderList, ssrRenderAttr, ssrRenderComponent, ssrRenderSlot, ssrRenderClass, ssrRenderVNode, ssrIncludeBooleanAttr, ssrRenderTeleport, renderToString } from "vue/server-renderer";
+import { usePage, Link, router, Head, createInertiaApp } from "@inertiajs/vue3";
 import createServer from "@inertiajs/vue3/server";
 const useInertiaPageProp = (prop) => {
   const { props } = usePage();
   return props[prop] ?? null;
+};
+const _sfc_main$d = /* @__PURE__ */ defineComponent({
+  __name: "Footer",
+  __ssrInlineRender: true,
+  setup(__props) {
+    const globals = useInertiaPageProp("globals");
+    const footer = globals?.footer;
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<footer${ssrRenderAttrs(mergeProps({ class: "border-t border-white/10 bg-[#080810] px-8 py-16" }, _attrs))}><div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 sm:grid-cols-3">`);
+      if (unref(footer)) {
+        _push(`<div><h3 class="text-sm font-semibold tracking-widest uppercase text-white/80">${ssrInterpolate(unref(footer).company_name)}</h3><p class="mt-4 whitespace-pre-line text-sm leading-relaxed text-gray-400">${ssrInterpolate(unref(footer).company_address)}</p></div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (unref(footer)?.social_links?.length) {
+        _push(`<div><h3 class="text-sm font-semibold tracking-widest uppercase text-white/80">Connect</h3><ul class="mt-4 space-y-2"><!--[-->`);
+        ssrRenderList(unref(footer).social_links, (link) => {
+          _push(`<li><a${ssrRenderAttr("href", link.url)}${ssrRenderAttr("target", link.external ? "_blank" : void 0)}${ssrRenderAttr("rel", link.external ? "noopener noreferrer" : void 0)} class="text-sm text-gray-400 hover:text-sky-400 transition-colors">${ssrInterpolate(link.platform)}</a></li>`);
+        });
+        _push(`<!--]--></ul></div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (unref(footer)?.newsletter_label) {
+        _push(`<div><h3 class="text-sm font-semibold tracking-widest uppercase text-white/80">From the Blog</h3><p class="mt-4 text-sm leading-relaxed text-gray-400">${ssrInterpolate(unref(footer).newsletter_label)}</p>`);
+        if (unref(footer).newsletter_cta_url) {
+          _push(ssrRenderComponent(unref(Link), {
+            href: unref(footer).newsletter_cta_url,
+            class: "mt-4 inline-flex items-center gap-2 text-sm font-medium text-sky-400 hover:text-sky-300 transition-colors"
+          }, {
+            default: withCtx((_, _push2, _parent2, _scopeId) => {
+              if (_push2) {
+                _push2(`<span${_scopeId}>Subscribe</span><span${_scopeId}>→</span>`);
+              } else {
+                return [
+                  createVNode("span", null, "Subscribe"),
+                  createVNode("span", null, "→")
+                ];
+              }
+            }),
+            _: 1
+          }, _parent));
+        } else {
+          _push(`<!---->`);
+        }
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`</div></footer>`);
+    };
+  }
+});
+const _sfc_setup$d = _sfc_main$d.setup;
+_sfc_main$d.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/Footer.vue");
+  return _sfc_setup$d ? _sfc_setup$d(props, ctx) : void 0;
 };
 const usePreviewRefresh = () => {
   function onPreviewMessage(e) {
@@ -19,6 +77,8 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
   __ssrInlineRender: true,
   setup(__props) {
     const nav = useInertiaPageProp("nav");
+    const globals = useInertiaPageProp("globals");
+    const siteName = globals?.general?.site_name ?? "Studio";
     usePreviewRefresh();
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<div${ssrRenderAttrs(mergeProps({ class: "layout min-h-screen bg-[#080810] text-white antialiased" }, _attrs))}><header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 backdrop-blur-sm bg-[#080810]/70 border-b border-white/10">`);
@@ -28,10 +88,10 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(` Studio `);
+            _push2(`${ssrInterpolate(unref(siteName))}`);
           } else {
             return [
-              createTextVNode(" Studio ")
+              createTextVNode(toDisplayString(unref(siteName)), 1)
             ];
           }
         }),
@@ -56,9 +116,11 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
           _: 2
         }, _parent));
       });
-      _push(`<!--]--></nav></header><div class="pt-[73px]">`);
+      _push(`<!--]--></nav></header><div class="pt-[61px]">`);
       ssrRenderSlot(_ctx.$slots, "default", {}, null, _push, _parent);
-      _push(`</div></div>`);
+      _push(`</div>`);
+      _push(ssrRenderComponent(_sfc_main$d, null, null, _parent));
+      _push(`</div>`);
     };
   }
 });
@@ -117,24 +179,71 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<div${ssrRenderAttrs(mergeProps({ class: "block-card-grid py-20 px-8" }, _attrs))}><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto"><!--[-->`);
       ssrRenderList(__props.cards, (card) => {
-        _push(`<a${ssrRenderAttr("href", card.link || "#")} class="group relative rounded-2xl overflow-hidden bg-white/[0.04] backdrop-blur-sm border border-white/[0.07] hover:border-sky-400/30 hover:bg-white/[0.07] transition-all duration-300 flex flex-col"><div class="relative overflow-hidden h-52">`);
-        if (card.image?.url) {
-          _push(`<img${ssrRenderAttr("src", card.image.url)}${ssrRenderAttr("srcset", card.image.srcset)} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"${ssrRenderAttr("alt", card.title)} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">`);
-        } else {
-          _push(`<!---->`);
-        }
-        _push(`<div class="absolute inset-0 bg-gradient-to-t from-[#080810]/80 to-transparent"></div></div><div class="p-6 flex flex-col flex-1">`);
-        if (card.title) {
-          _push(`<h3 class="text-base font-semibold text-white mb-2">${ssrInterpolate(card.title)}</h3>`);
-        } else {
-          _push(`<!---->`);
-        }
-        if (card.text) {
-          _push(`<p class="text-gray-400 text-sm leading-relaxed flex-1">${ssrInterpolate(card.text)}</p>`);
-        } else {
-          _push(`<!---->`);
-        }
-        _push(`<div class="mt-5 flex items-center gap-2 text-sky-400 text-sm font-medium"><span>Read more</span><span class="group-hover:translate-x-1 transition-transform duration-200">→</span></div></div></a>`);
+        ssrRenderVNode(_push, createVNode(resolveDynamicComponent(card.link ? "a" : "div"), {
+          key: card.id,
+          href: card.link || void 0,
+          class: "group relative rounded-2xl overflow-hidden bg-white/[0.04] backdrop-blur-sm border border-white/[0.07] hover:border-sky-400/30 hover:bg-white/[0.07] transition-all duration-300 flex flex-col"
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<div class="relative overflow-hidden h-52"${_scopeId}>`);
+              if (card.image?.url) {
+                _push2(`<img${ssrRenderAttr("src", card.image.url)}${ssrRenderAttr("srcset", card.image.srcset)} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"${ssrRenderAttr("alt", card.title)} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"${_scopeId}>`);
+              } else {
+                _push2(`<!---->`);
+              }
+              _push2(`<div class="absolute inset-0 bg-gradient-to-t from-[#080810]/80 to-transparent"${_scopeId}></div></div><div class="p-6 flex flex-col flex-1"${_scopeId}>`);
+              if (card.title) {
+                _push2(`<h3 class="text-base font-semibold text-white mb-2"${_scopeId}>${ssrInterpolate(card.title)}</h3>`);
+              } else {
+                _push2(`<!---->`);
+              }
+              if (card.text) {
+                _push2(`<p class="text-gray-400 text-sm leading-relaxed flex-1"${_scopeId}>${ssrInterpolate(card.text)}</p>`);
+              } else {
+                _push2(`<!---->`);
+              }
+              if (card.link) {
+                _push2(`<div class="mt-5 flex items-center gap-2 text-sky-400 text-sm font-medium"${_scopeId}><span${_scopeId}>Read more</span><span class="group-hover:translate-x-1 transition-transform duration-200"${_scopeId}>→</span></div>`);
+              } else {
+                _push2(`<!---->`);
+              }
+              _push2(`</div>`);
+            } else {
+              return [
+                createVNode("div", { class: "relative overflow-hidden h-52" }, [
+                  card.image?.url ? (openBlock(), createBlock("img", {
+                    key: 0,
+                    src: card.image.url,
+                    srcset: card.image.srcset,
+                    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+                    alt: card.title,
+                    class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  }, null, 8, ["src", "srcset", "alt"])) : createCommentVNode("", true),
+                  createVNode("div", { class: "absolute inset-0 bg-gradient-to-t from-[#080810]/80 to-transparent" })
+                ]),
+                createVNode("div", { class: "p-6 flex flex-col flex-1" }, [
+                  card.title ? (openBlock(), createBlock("h3", {
+                    key: 0,
+                    class: "text-base font-semibold text-white mb-2"
+                  }, toDisplayString(card.title), 1)) : createCommentVNode("", true),
+                  card.text ? (openBlock(), createBlock("p", {
+                    key: 1,
+                    class: "text-gray-400 text-sm leading-relaxed flex-1"
+                  }, toDisplayString(card.text), 1)) : createCommentVNode("", true),
+                  card.link ? (openBlock(), createBlock("div", {
+                    key: 2,
+                    class: "mt-5 flex items-center gap-2 text-sky-400 text-sm font-medium"
+                  }, [
+                    createVNode("span", null, "Read more"),
+                    createVNode("span", { class: "group-hover:translate-x-1 transition-transform duration-200" }, "→")
+                  ])) : createCommentVNode("", true)
+                ])
+              ];
+            }
+          }),
+          _: 2
+        }), _parent);
       });
       _push(`<!--]--></div></div>`);
     };
@@ -159,16 +268,31 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
   },
   setup(__props) {
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<a${ssrRenderAttrs(mergeProps({
+      _push(ssrRenderComponent(unref(Link), mergeProps({
         href: __props.entry.url,
         class: "block-entry-listing-default group py-4 border-b border-white/[0.07] flex items-baseline justify-between gap-4"
-      }, _attrs))}><h3 class="text-white font-medium group-hover:text-sky-400 transition-colors duration-200">${ssrInterpolate(__props.entry.title)}</h3>`);
-      if (__props.entry.date) {
-        _push(`<time${ssrRenderAttr("datetime", __props.entry.date)} class="text-gray-500 text-sm shrink-0">${ssrInterpolate(__props.entry.date)}</time>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`</a>`);
+      }, _attrs), {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(`<h3 class="text-white font-medium group-hover:text-sky-400 transition-colors duration-200"${_scopeId}>${ssrInterpolate(__props.entry.title)}</h3>`);
+            if (__props.entry.date) {
+              _push2(`<time${ssrRenderAttr("datetime", __props.entry.date)} class="text-gray-500 text-sm shrink-0"${_scopeId}>${ssrInterpolate(__props.entry.date)}</time>`);
+            } else {
+              _push2(`<!---->`);
+            }
+          } else {
+            return [
+              createVNode("h3", { class: "text-white font-medium group-hover:text-sky-400 transition-colors duration-200" }, toDisplayString(__props.entry.title), 1),
+              __props.entry.date ? (openBlock(), createBlock("time", {
+                key: 0,
+                datetime: __props.entry.date,
+                class: "text-gray-500 text-sm shrink-0"
+              }, toDisplayString(__props.entry.date), 9, ["datetime"])) : createCommentVNode("", true)
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
     };
   }
 });

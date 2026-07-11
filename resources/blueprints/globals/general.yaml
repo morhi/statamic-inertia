@@ -1,0 +1,15 @@
+title: General
+tabs:
+  main:
+    display: Main
+    sections:
+      -
+        fields:
+          -
+            handle: site_name
+            field:
+              type: text
+              display: 'Site Name'
+              localizable: true
+              required: true
+              default: Studio

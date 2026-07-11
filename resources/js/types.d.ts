@@ -2,6 +2,7 @@
 
 interface AssetField {
   url: string
+  thumb_url: string;
   srcset: string
   alt: string
 }

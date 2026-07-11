@@ -1,0 +1,64 @@
+title: Footer
+tabs:
+  studio:
+    display: Studio
+    sections:
+      -
+        fields:
+          -
+            handle: company_name
+            field:
+              type: text
+              display: 'Company Name'
+              required: true
+          -
+            handle: company_address
+            field:
+              type: textarea
+              display: 'Company Address'
+  connect:
+    display: Connect
+    sections:
+      -
+        fields:
+          -
+            handle: social_links
+            field:
+              type: replicator
+              display: 'Social Links'
+              sets:
+                social_link_items:
+                  display: Links
+                  sets:
+                    social_link:
+                      display: 'Social Link'
+                      fields:
+                        -
+                          handle: platform
+                          field:
+                            type: text
+                            display: Platform
+                            required: true
+                        -
+                          handle: url
+                          field:
+                            type: text
+                            display: URL
+                            required: true
+  blog:
+    display: 'From the Blog'
+    sections:
+      -
+        fields:
+          -
+            handle: newsletter_label
+            field:
+              type: text
+              display: 'Newsletter Label'
+              default: 'Enjoying the blog? Get new posts by email.'
+          -
+            handle: newsletter_cta_url
+            field:
+              type: text
+              display: 'Newsletter CTA URL'
+              default: '/subscribe'

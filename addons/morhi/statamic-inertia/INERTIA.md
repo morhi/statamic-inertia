@@ -15,17 +15,18 @@ For installation instructions, see [README.md](README.md). This document covers 
 5. [Root Template](#root-template)
 6. [Page Component Resolution](#page-component-resolution)
 7. [Entry Data & Transformers](#entry-data--transformers)
-8. [Block Builder](#block-builder)
-9. [Entry Listing Block](#entry-listing-block)
-10. [Navigation](#navigation)
-11. [Image Handling (Glide)](#image-handling-glide)
-12. [Shared Props](#shared-props)
-13. [Caching](#caching)
-14. [Statamic Live Preview](#statamic-live-preview)
-15. [Development Setup](#development-setup)
-16. [SSR Setup](#ssr-setup)
-17. [Adding a New Page Type](#adding-a-new-page-type)
-18. [Adding a New Block](#adding-a-new-block)
+8. [Globals](#globals)
+9. [Block Builder](#block-builder)
+10. [Entry Listing Block](#entry-listing-block)
+11. [Navigation](#navigation)
+12. [Image Handling (Glide)](#image-handling-glide)
+13. [Shared Props](#shared-props)
+14. [Caching](#caching)
+15. [Statamic Live Preview](#statamic-live-preview)
+16. [Development Setup](#development-setup)
+17. [SSR Setup](#ssr-setup)
+18. [Adding a New Page Type](#adding-a-new-page-type)
+19. [Adding a New Block](#adding-a-new-block)
 
 ---
 
@@ -317,6 +318,70 @@ class ArticleData extends AbstractEntryData
 
 ---
 
+## Globals
+
+Statamic Global Sets are exposed to every page as a `globals` shared prop, but **nothing is exposed automatically** — each var must be explicitly whitelisted in `config('inertia.globals')`. This is deliberate: a global added for one page shouldn't silently leak into every other page's props just because it exists.
+
+### Config shape
+
+```php
+// config/inertia.php
+'globals' => [
+    'site_settings' => [
+        '*',                                       // catch-all: any var not listed below, unrestricted
+        'back_to_blog' => ['collection:blog'],      // only exposed on pages in the "blog" collection
+        'links' => FooterLinksTransformer::class,   // reshaped after the normal fieldtype transform
+    ],
+],
+```
+
+Each global set handle maps to a mixed list of rules:
+
+- a bare var handle (or `'*'`) exposes that var (or, for `'*'`, any var not explicitly listed elsewhere in the same list) **unrestricted**;
+- `'var' => ['type:value', ...]` exposes it only when **every** scope predicate matches (combined with AND). Supported predicates: `site:`, `collection:`, `blueprint:`, compared against the entry resolved for the current request;
+- `'var' => SomeTransformer::class` exposes it unrestricted, and reshapes the value — already run through the normal fieldtype transformers — via a class implementing `GlobalValueTransformer`.
+
+### Site scope vs. localization
+
+`site:` restricts *which pages a var is exposed on* — it's a page-context whitelist. It's unrelated to a field's own `localizable: true`, which already makes Statamic return a different *value* per site (resolved by `GlobalSet::findByHandle($handle)->in($site->handle())`, before any whitelist/scope logic runs). A translated field doesn't need a `site:` predicate just because its value differs per site — only use `site:` when a var should be hidden entirely on certain sites' pages.
+
+### GlobalsResolver
+
+`Morhi\StatamicInertia\Support\Globals\GlobalsResolver::resolve(Site $site, ?Entry $entry)` does the work: for each configured global set, it loads the site-localized `Variables` instance, filters vars by whitelist + scope, and transforms each value via `EntryTransformer::transform($variables, [$varHandle])` — the same fieldtype transformers used for entries, since `Variables` exposes `blueprint()`/`data()`/`augmentedValue()` identically to `Entry`.
+
+The current entry (used for `collection:`/`blueprint:` scope matching) is resolved via `CurrentEntryResolver`, shared with `StatamicPageController` so both always agree on what "the current page" is.
+
+### GlobalValueTransformer
+
+For per-var reshaping beyond the standard fieldtype transform:
+
+```php
+use Morhi\StatamicInertia\Support\Globals\GlobalValueTransformer;
+
+class FooterLinksTransformer implements GlobalValueTransformer
+{
+    public function transform(mixed $value): mixed
+    {
+        return collect($value)->map(fn ($link) => [
+            ...$link,
+            'external' => str_starts_with($link['url'], 'http'),
+        ])->all();
+    }
+}
+```
+
+Matches `FieldTransformerInterface`'s shape exactly (`transform($value): mixed`) — it receives only the already-transformed value. If an implementation needs entry/site context, it resolves that itself (`Statamic\Facades\Site::current()`, `app(CurrentEntryResolver::class)->resolve(request())`), the same way any other Statamic code would.
+
+### Accessing globals in Vue
+
+```ts
+const globals = useInertiaPageProp<{ footer?: { company_name: string } }>('globals');
+```
+
+`globals` follows the same `Inertia::once()` first-load-only pattern as `nav` (see below).
+
+---
+
 ## Block Builder
 
 Pages use a Replicator field (`content_blocks`) that supports multiple block types. The data flows from Statamic through to Vue as a typed array. The fieldsets and blueprint below are shipped as the `statamic-inertia-examples` publish group — treat them as a starting point, not fixed infrastructure.
@@ -597,6 +662,7 @@ The wildcard route in this addon's `routes/web.php` excludes `img` paths so that
 | `site` | `string` | Current site handle |
 | `locale` | `string` | Short locale (e.g. `en`) |
 | `nav` | `Array<{label, href}>` | Main navigation (first load only, via `Inertia::once()`) |
+| `globals` | `Record<string, Record<string, unknown>>` | Whitelisted Global Set vars, keyed by set handle (first load only, via `Inertia::once()`) — see [Globals](#globals) |
 
 ---
 

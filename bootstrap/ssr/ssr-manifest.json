@@ -21,6 +21,8 @@
   "resources/js/Components/Blocks.vue?vue&type=script&setup=true&lang.ts": [],
   "resources/js/Components/EntryPreviews/Default.vue": [],
   "resources/js/Components/EntryPreviews/Default.vue?vue&type=script&setup=true&lang.ts": [],
+  "resources/js/Components/Footer.vue": [],
+  "resources/js/Components/Footer.vue?vue&type=script&setup=true&lang.ts": [],
   "resources/js/Pages/Blog.vue": [],
   "resources/js/Pages/Blog.vue?vue&type=script&setup=true&lang.ts": [],
   "resources/js/Pages/Layout.vue": [],

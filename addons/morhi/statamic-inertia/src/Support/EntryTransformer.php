@@ -5,6 +5,7 @@ namespace Morhi\StatamicInertia\Support;
 use Morhi\StatamicInertia\Support\Transformers\FieldTransformerInterface;
 use Statamic\Contracts\Entries\Entry;
 use Statamic\Fields\Value;
+use Statamic\Globals\Variables;
 
 class EntryTransformer
 {
@@ -22,7 +23,11 @@ class EntryTransformer
         return $value->value();
     }
 
-    public function transform(Entry $entry, array $fields = []): array
+    /**
+     * @param Entry|Variables $entry Both expose blueprint()/data()/augmentedValue(), so this
+     *   also transforms Global Set data (Variables) through the same fieldtype transformers.
+     */
+    public function transform(Entry|Variables $entry, array $fields = []): array
     {
         $blueprint = $entry->blueprint();
         $data      = empty($fields) ? $entry->data() : $entry->data()->only($fields);

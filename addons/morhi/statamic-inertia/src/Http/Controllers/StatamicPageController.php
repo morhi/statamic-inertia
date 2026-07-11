@@ -3,18 +3,17 @@
 namespace Morhi\StatamicInertia\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Morhi\StatamicInertia\Support\CurrentEntryResolver;
 use Morhi\StatamicInertia\Support\DataProviders\EntryDataRegistry;
 use Morhi\StatamicInertia\Support\EntryTransformer;
 use Statamic\Contracts\Entries\Entry as EntryContract;
-use Statamic\Facades\Entry;
-use Statamic\Facades\Site;
-use Statamic\Structures\Page;
 
 class StatamicPageController extends InertiaController
 {
     public function __construct(
         private EntryTransformer $transformer,
         private EntryDataRegistry $registry,
+        private CurrentEntryResolver $entryResolver,
     ) {}
 
     /**
@@ -24,19 +23,11 @@ class StatamicPageController extends InertiaController
      * e.g. collection "pages", blueprint "page"    → Pages/Page.vue
      *      collection "blog",  blueprint "article" → Blog/Article.vue
      */
-    public function __invoke(Request $request, ?string $uri = null)
+    public function __invoke(Request $request)
     {
-        $uri   = '/' . ltrim($uri ?? '', '/');
-        $entry = Entry::findByUri($uri, Site::current()->handle());
+        $entry = $this->entryResolver->resolve($request);
 
         abort_unless($entry, 404);
-
-        // For structured collections, findByUri returns a Page proxy.
-        // Unwrap it to get the underlying Entry so collection() and blueprint() work correctly.
-        if ($entry instanceof Page) {
-            $entry = $entry->entry();
-            abort_unless($entry, 404);
-        }
 
         return $this->view($this->resolveComponent($entry), [
             'entry' => [

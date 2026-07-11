@@ -10,7 +10,9 @@ use Morhi\StatamicInertia\Http\Middleware\InertiaAwareStaticCache;
 use Morhi\StatamicInertia\Http\Middleware\InertiaJsonCache;
 use Morhi\StatamicInertia\Listeners\InvalidateCollectionListingCache;
 use Morhi\StatamicInertia\Support\Blocks\BlockResolverRegistry;
+use Morhi\StatamicInertia\Support\CurrentEntryResolver;
 use Morhi\StatamicInertia\Support\DataProviders\EntryDataRegistry;
+use Morhi\StatamicInertia\Support\Globals\GlobalsResolver;
 use Morhi\StatamicInertia\Support\EntryListing\EntryListingBlockResolver;
 use Morhi\StatamicInertia\Support\EntryListing\EntryListingPreviewRegistry;
 use Morhi\StatamicInertia\Support\EntryTransformer;
@@ -50,6 +52,8 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->singleton(EntryDataRegistry::class);
         $this->app->singleton(BlockResolverRegistry::class);
         $this->app->singleton(EntryListingPreviewRegistry::class);
+        $this->app->singleton(CurrentEntryResolver::class);
+        $this->app->singleton(GlobalsResolver::class);
 
         $this->app->singleton(EntryTransformer::class, fn () => new EntryTransformer([
             'assets'     => new AssetsTransformer(),
