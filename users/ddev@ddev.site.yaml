@@ -9,3 +9,7 @@ preferences:
     listing_mode: list
     blog:
       view: list
+      columns:
+        - title
+        - slug
+        - author

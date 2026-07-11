@@ -5,7 +5,7 @@ title: Homepage
 template: home
 author: dec72713-dc5a-45dc-9f82-4035fe14663d
 updated_by: dec72713-dc5a-45dc-9f82-4035fe14663d
-updated_at: 1783692470
+updated_at: 1783719061
 content_blocks:
   -
     id: hero-block-001
@@ -36,6 +36,25 @@ content_blocks:
             text: 'The best way to predict the future is to invent it.'
     author: 'Alan Kay'
     author_image: leon-rohrwild-5apkpfvda8i-unsplash.jpg
+  -
+    id: bpMbIh6n74f2hmnK7Um_q
+    column_count: three
+    images:
+      - alan-jiang-md3fl3s4z3s-unsplash.jpg
+      - evgeni-tcherkasski-kow5jlc9ipi-unsplash.jpg
+      - leon-rohrwild-5apkpfvda8i-unsplash.jpg
+      - marek-piwnicki-j9rf6ctw_q0-unsplash.jpg
+      - tsuyoshi-kozu-boc-f7jwdek-unsplash.jpg
+      - viktor-forgacs-click-vng9kgg_era-unsplash.jpg
+    type: masonry_gallery
+    enabled: true
+  -
+    id: mBd05_5VrlbGr6G4hcPVY
+    heading: 'Even more from the blog'
+    collection: blog
+    per_page: 2
+    type: entry_listing
+    enabled: true
   -
     id: card-grid-block-001
     type: card_grid

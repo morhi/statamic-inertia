@@ -18,7 +18,13 @@ No support yet for Statamic Global Sets. Likely shape:
 
 - A shared Inertia prop (similar to `nav`, via `Inertia::once()` in `HandleInertiaRequests::share()`) that exposes one or more global sets to every page — e.g. site settings, footer content, social links.
 - Should reuse `EntryTransformer` field transformers so assets/bard/replicator fields in globals are transformed the same way as entry fields, rather than passed through raw.
-- Needs a decision on whether *all* global sets are shared automatically, or whether they're opt-in per set (config array of handles to expose), to avoid over-fetching data that isn't used on most pages.
+- Scope needs to be configurable at more than one level — not every global belongs on every page:
+  - **Per site**: some globals only make sense for a given site in a multi-site setup (e.g. a region-specific phone number).
+  - **Per collection**: some globals should only reach pages belonging to a specific collection (e.g. a "news" global only shared with the `news` collection's pages, not `pages` or `blog`).
+  - **Per blueprint**: narrower still, a global scoped to entries of one specific blueprint within a collection.
+- Exposure must be **whitelist-based, not automatic**: no global set (or field within one) reaches Vue unless it's explicitly listed in config, scoped to the site/collection/blueprint combination it's meant for. This avoids the failure mode where a global added for one use case accidentally leaks into every other page's props simply because it exists.
+- A whitelist entry can use `*` to mean "every var in this global set" — that's still an explicit, deliberate choice made by whoever wrote the config, not an accidental default, so it's a legitimate shorthand rather than something to disallow. The distinction that matters is *explicit request* vs. *automatic exposure*, not *narrow* vs. *broad*.
+- Needs a decision on the exact config shape for expressing these scopes (e.g. a map of global handle → allowed sites/collections/blueprints) and where scope resolution happens — in `HandleInertiaRequests::share()` itself, or in a dedicated `GlobalsRegistry` mirroring `BlockResolverRegistry`'s pattern.
 
 ## Forms
 
