@@ -170,7 +170,7 @@ Everything that must physically live in the host project (Vite can only build fi
 
 | Tag | Destination | Contents |
 |---|---|---|
-| `statamic-inertia-config` | `config/inertia.php` | `inertiajs/inertia-laravel` config (also auto-merged, so it works even unpublished) |
+| `statamic-inertia-config` | `config/statamic-inertia.php` | Entry listing and globals whitelist config (also auto-merged, so it works even unpublished) |
 | `statamic-inertia-scaffold` | `resources/js/` | Core bootstrap: `app.js`, `ssr.js`, `types.d.ts`, `utils/`, `Pages/Layout.vue`, `Pages/Pages/Page.vue`, `Components/Blocks.vue` |
 | `statamic-inertia-examples` | `resources/js/Blocks/`, `resources/js/Components/EntryPreviews/`, `resources/fieldsets/`, `resources/blueprints/collections/pages/` | Optional starter blocks (incl. `entry_listing`) + matching fieldsets/blueprint + fallback entry-listing preview card — safe to delete or replace |
 | `statamic-inertia-views` | `resources/views/` | Root Antlers template + Blade partials |
@@ -320,12 +320,12 @@ class ArticleData extends AbstractEntryData
 
 ## Globals
 
-Statamic Global Sets are exposed to every page as a `globals` shared prop, but **nothing is exposed automatically** — each var must be explicitly whitelisted in `config('inertia.globals')`. This is deliberate: a global added for one page shouldn't silently leak into every other page's props just because it exists.
+Statamic Global Sets are exposed to every page as a `globals` shared prop, but **nothing is exposed automatically** — each var must be explicitly whitelisted in `config('statamic-inertia.globals')`. This is deliberate: a global added for one page shouldn't silently leak into every other page's props just because it exists.
 
 ### Config shape
 
 ```php
-// config/inertia.php
+// config/statamic-inertia.php
 'globals' => [
     'site_settings' => [
         '*',                                       // catch-all: any var not listed below, unrestricted
@@ -504,7 +504,7 @@ Registered against the `entry_listing` set handle (see [BlockResolverInterface /
 
 1. Unwraps the block's `collection` field to a plain handle string — the `collections` fieldtype's augmented value is a hydrated `Collection` model, not the handle, so it reads the raw stored value the same way `Values::toArray()` does internally.
 2. Calls `EntryListingQuery::paginate($collectionHandle, $perPage, 1)` for page 1.
-3. Merges the query result with the block's own fields and a `load_more_url` (from `config('inertia.entry_listing.route')`):
+3. Merges the query result with the block's own fields and a `load_more_url` (from `config('statamic-inertia.entry_listing.route')`):
 
 ```json
 {
@@ -548,7 +548,7 @@ If no provider is registered for a collection, `preview` is an empty array.
 
 ### "Load more" endpoint
 
-`EntryListingController` is mounted at `config('inertia.entry_listing.route')` (default `/api/entry-listing`, overridable via `INERTIA_ENTRY_LISTING_ROUTE`) in `routes/web.php`, deliberately outside the `statamic.inertia` middleware group and the wildcard route. It returns plain JSON (not an Inertia response), so it is never touched by `InertiaAwareStaticCache` or `InertiaJsonCache` and always serves fresh data. It validates `collection` (must be a real, existing collection handle), `page`, and `per_page` (`max:50`), then calls the same `EntryListingQuery::paginate()`.
+`EntryListingController` is mounted at `config('statamic-inertia.entry_listing.route')` (default `/api/entry-listing`, overridable via `INERTIA_ENTRY_LISTING_ROUTE`) in `routes/web.php`, deliberately outside the `statamic.inertia` middleware group and the wildcard route. It returns plain JSON (not an Inertia response), so it is never touched by `InertiaAwareStaticCache` or `InertiaJsonCache` and always serves fresh data. It validates `collection` (must be a real, existing collection handle), `page`, and `per_page` (`max:50`), then calls the same `EntryListingQuery::paginate()`.
 
 ### Cache invalidation gap it closes
 
@@ -791,7 +791,7 @@ In production, manage this process with a supervisor or pm2 to keep it alive.
 
 ### SSR configuration
 
-`config/inertia.php` (published by `statamic-inertia-config`, or read directly from the addon if unpublished) controls SSR behaviour:
+`config/inertia.php` (the `inertiajs/inertia-laravel` config, unrelated to the addon's `statamic-inertia-config` publish tag) controls SSR behaviour:
 
 ```php
 'ssr' => [

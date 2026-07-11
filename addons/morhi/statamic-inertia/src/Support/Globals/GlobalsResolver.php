@@ -14,7 +14,7 @@ class GlobalsResolver
     public function __construct(protected EntryTransformer $transformer) {}
 
     /**
-     * Resolve the `globals` shared prop: every var whitelisted in config('inertia.globals'),
+     * Resolve the `globals` shared prop: every var whitelisted in config('statamic-inertia.globals'),
      * filtered by its scope predicates, transformed through the same fieldtype transformers
      * used for entries, and reshaped by any configured GlobalValueTransformer.
      */
@@ -22,7 +22,7 @@ class GlobalsResolver
     {
         $result = [];
 
-        foreach (config('inertia.globals', []) as $handle => $rules) {
+        foreach (config('statamic-inertia.globals', []) as $handle => $rules) {
             $variables = $this->resolveVariables($handle, $site);
 
             if (! $variables) {

@@ -74,12 +74,12 @@ class ServiceProvider extends AddonServiceProvider
 
     private function bootConfigFile(): void
     {
-        $config = __DIR__.'/../config/inertia.php';
+        $config = __DIR__.'/../config/statamic-inertia.php';
 
-        $this->mergeConfigFrom($config, 'inertia');
+        $this->mergeConfigFrom($config, 'statamic-inertia');
 
         $this->publishes([
-            $config => config_path('inertia.php'),
+            $config => config_path('statamic-inertia.php'),
         ], 'statamic-inertia-config');
     }
 

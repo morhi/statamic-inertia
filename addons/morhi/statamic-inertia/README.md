@@ -15,7 +15,7 @@ This publishes:
 
 | Tag | Destination | Contents |
 |---|---|---|
-| `statamic-inertia-config` | `config/inertia.php` | `inertiajs/inertia-laravel` configuration |
+| `statamic-inertia-config` | `config/statamic-inertia.php` | Entry listing and globals whitelist configuration |
 | `statamic-inertia-scaffold` | `resources/js/` | Core Inertia/Vue bootstrap: `app.js`, `ssr.js`, `types.d.ts`, `utils/`, `Pages/Layout.vue`, `Pages/Pages/Page.vue`, `Components/Blocks.vue` |
 | `statamic-inertia-examples` | `resources/js/Blocks/`, `resources/fieldsets/`, `resources/blueprints/collections/pages/` | Optional starter blocks (Text, Hero, Quote, CardGrid, Accordion, ImageCaption, MasonryGallery) with matching fieldsets and a `page` blueprint — safe to delete or replace |
 | `statamic-inertia-views` | `resources/views/` | Root Antlers template (`layout.antlers.html`), a body-only variant (`inertia.antlers.html`), and Blade partials for `@inertia`/`@inertiaHead` |

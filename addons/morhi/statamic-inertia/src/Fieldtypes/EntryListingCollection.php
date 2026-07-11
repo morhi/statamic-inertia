@@ -16,7 +16,7 @@ class EntryListingCollection extends Select
 
     protected function getOptions(): array
     {
-        return collect(config('inertia.entry_listing.allowed_collections', []))
+        return collect(config('statamic-inertia.entry_listing.allowed_collections', []))
             ->map(fn ($handle) => [
                 'value' => $handle,
                 'label' => optional(Collection::findByHandle($handle))->title() ?? $handle,

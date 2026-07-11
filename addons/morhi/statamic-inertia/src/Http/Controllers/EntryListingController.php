@@ -18,7 +18,7 @@ class EntryListingController
         $validator = Validator::make($request->all(), [
             'collection' => ['required', 'string', Rule::in(
                 array_intersect(
-                    config('inertia.entry_listing.allowed_collections', []),
+                    config('statamic-inertia.entry_listing.allowed_collections', []),
                     Collection::handles()->all()
                 )
             )],
